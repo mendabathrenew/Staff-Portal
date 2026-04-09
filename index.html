@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Mendabath – Staff Portal</title>
+
+<!-- PWA Meta Tags -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MB Portal">
+<meta name="theme-color" content="#2E2E2E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -28,192 +38,53 @@
     overscroll-behavior: none;
   }
 
-  /* ── HEADER ── */
-  .app-header {
-    background: var(--grey-dark);
-    padding: 52px 20px 20px;
-    position: relative;
-  }
-  .app-header .logo-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 4px;
-  }
-  .logo-badge {
-    background: var(--yellow);
-    border-radius: 8px;
-    padding: 5px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    line-height: 1.15;
-    flex-shrink: 0;
-  }
+  /* HEADER */
+  .app-header { background: var(--grey-dark); padding: 52px 20px 20px; }
+  .app-header .logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .logo-badge { background: var(--yellow); border-radius: 8px; padding: 5px 10px; display: flex; flex-direction: column; align-items: center; line-height: 1.15; flex-shrink: 0; }
   .logo-badge span:first-child { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 12px; color: var(--grey-dark); letter-spacing: 0.5px; }
   .logo-badge span:last-child  { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 10px; color: var(--grey-dark); letter-spacing: 1px; }
-  .app-header h1 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 26px;
-    color: var(--white);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .app-header p {
-    font-size: 13px;
-    color: #aaa;
-    margin-top: 2px;
-  }
+  .app-header h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 26px; color: var(--white); letter-spacing: 1px; text-transform: uppercase; }
+  .app-header p { font-size: 13px; color: #aaa; margin-top: 2px; }
 
-  /* ── SCROLL BODY ── */
-  .scroll-body {
-    overflow-y: auto;
-    padding: 16px 16px calc(var(--nav-h) + 20px);
-    -webkit-overflow-scrolling: touch;
-  }
+  /* SCROLL BODY */
+  .scroll-body { overflow-y: auto; padding: 16px 16px calc(var(--nav-h) + 20px); -webkit-overflow-scrolling: touch; }
 
-  /* ── SCREENS ── */
+  /* SCREENS */
   .screen { display: none; }
   .screen.active { display: block; animation: fadeUp 0.25s ease; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* ── CATEGORY HEADER ── */
-  .cat-header {
-    background: var(--yellow);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin: 20px 0 10px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 15px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--grey-dark);
-  }
+  /* CATEGORY HEADER */
+  .cat-header { background: var(--yellow); border-radius: 10px; padding: 10px 14px; margin: 20px 0 10px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; color: var(--grey-dark); }
   .cat-header:first-child { margin-top: 4px; }
 
-  /* ── LINK CARD ── */
-  .link-card {
-    background: var(--white);
-    border-radius: 12px;
-    border: 1px solid var(--grey-border);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.15s;
-    cursor: pointer;
-    -webkit-user-select: none;
-    user-select: none;
-  }
+  /* LINK CARD */
+  .link-card { background: var(--white); border-radius: 12px; border: 1px solid var(--grey-border); display: flex; align-items: center; gap: 14px; padding: 14px 16px; margin-bottom: 10px; text-decoration: none; color: inherit; transition: all 0.15s; cursor: pointer; -webkit-user-select: none; user-select: none; }
   .link-card:active { transform: scale(0.98); background: #f8f8f5; }
-  .link-card .card-icon {
-    width: 44px; height: 44px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-  }
+  .link-card .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
   .link-card .card-text { flex: 1; min-width: 0; }
-  .link-card .card-title {
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--grey-dark);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .link-card .card-desc {
-    font-size: 12px;
-    color: var(--grey-light);
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .link-card .arrow {
-    color: #ccc;
-    font-size: 18px;
-    flex-shrink: 0;
-    margin-left: 4px;
-  }
+  .link-card .card-title { font-weight: 600; font-size: 15px; color: var(--grey-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .link-card .card-desc { font-size: 12px; color: var(--grey-light); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .link-card .arrow { color: #ccc; font-size: 18px; flex-shrink: 0; margin-left: 4px; }
 
-  /* icon bg colours */
   .ic-yellow  { background: #FFF8C2; }
   .ic-blue    { background: #E3F0FF; }
-  .ic-green   { background: #E8F5E9; }
   .ic-orange  { background: #FFF3E0; }
   .ic-purple  { background: #F3E5F5; }
   .ic-teal    { background: #E0F7FA; }
-  .ic-red     { background: #FFEBEE; }
   .ic-grey    { background: #F5F5F5; }
 
-  /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: var(--nav-h);
-    background: var(--white);
-    border-top: 1px solid var(--grey-border);
-    display: flex;
-    align-items: stretch;
-    z-index: 100;
-    padding-bottom: env(safe-area-inset-bottom);
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
-  }
-  .nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    cursor: pointer;
-    border: none;
-    background: none;
-    padding: 8px 4px;
-    color: #aaa;
-    font-family: 'Barlow', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    transition: color 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
+  /* BOTTOM NAV */
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h); background: var(--white); border-top: 1px solid var(--grey-border); display: flex; align-items: stretch; z-index: 100; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 12px rgba(0,0,0,0.06); }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; border: none; background: none; padding: 8px 4px; color: #aaa; font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; transition: color 0.15s; -webkit-tap-highlight-color: transparent; }
   .nav-item.active { color: var(--grey-dark); }
   .nav-item .nav-icon { font-size: 20px; line-height: 1; }
-  .nav-item.active .nav-icon-home { filter: none; }
 
-  /* ── ABOUT SCREEN ── */
-  .about-card {
-    background: var(--white);
-    border-radius: 14px;
-    border: 1px solid var(--grey-border);
-    overflow: hidden;
-    margin-bottom: 14px;
-  }
-  .about-hero {
-    background: var(--grey-dark);
-    padding: 28px 24px;
-    text-align: center;
-  }
-  .about-hero .big-badge {
-    background: var(--yellow);
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 12px;
-    padding: 10px 18px;
-    margin-bottom: 14px;
-    line-height: 1.2;
-  }
+  /* ABOUT SCREEN */
+  .about-card { background: var(--white); border-radius: 14px; border: 1px solid var(--grey-border); overflow: hidden; margin-bottom: 14px; }
+  .about-hero { background: var(--grey-dark); padding: 28px 24px; text-align: center; }
+  .about-hero .big-badge { background: var(--yellow); display: inline-flex; flex-direction: column; align-items: center; border-radius: 12px; padding: 10px 18px; margin-bottom: 14px; line-height: 1.2; }
   .about-hero .big-badge span:first-child { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 20px; color: var(--grey-dark); }
   .about-hero .big-badge span:last-child  { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; color: var(--grey-dark); letter-spacing: 2px; }
   .about-hero h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; color: var(--white); letter-spacing: 1px; text-transform: uppercase; }
@@ -226,34 +97,10 @@
   .about-row .info .val { font-size: 14px; color: var(--grey-dark); margin-top: 1px; }
   .about-row .info a { color: var(--grey-dark); text-decoration: none; }
 
-  /* ── CONTACT SCREEN ── */
-  .contact-card {
-    background: var(--white);
-    border-radius: 14px;
-    border: 1px solid var(--grey-border);
-    margin-bottom: 12px;
-    overflow: hidden;
-  }
-  .contact-card-header {
-    background: var(--grey-dark);
-    padding: 10px 16px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--yellow);
-  }
-  .contact-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 13px 16px;
-    border-bottom: 1px solid var(--grey-border);
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.15s;
-  }
+  /* CONTACT SCREEN */
+  .contact-card { background: var(--white); border-radius: 14px; border: 1px solid var(--grey-border); margin-bottom: 12px; overflow: hidden; }
+  .contact-card-header { background: var(--grey-dark); padding: 10px 16px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--yellow); }
+  .contact-row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--grey-border); text-decoration: none; color: inherit; transition: background 0.15s; }
   .contact-row:last-child { border-bottom: none; }
   .contact-row:active { background: #f8f8f5; }
   .contact-row .c-icon { font-size: 18px; width: 28px; text-align: center; }
@@ -261,61 +108,40 @@
   .contact-row .c-info .c-val { font-size: 14px; color: var(--grey-dark); margin-top: 1px; font-weight: 500; }
   .contact-row .c-arrow { margin-left: auto; color: #ccc; font-size: 16px; }
 
-  /* SCREEN TITLES */
-  .screen-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 22px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--grey-dark);
-    margin-bottom: 16px;
-    margin-top: 4px;
-  }
+  .screen-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: 1px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 16px; margin-top: 4px; }
 
-  /* quick-access grid on home */
-  .quick-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 6px;
-  }
-  .quick-card {
-    background: var(--white);
-    border-radius: 12px;
-    border: 1px solid var(--grey-border);
-    padding: 14px 12px;
-    text-align: center;
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.15s;
-  }
+  /* QUICK GRID */
+  .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 6px; }
+  .quick-card { background: var(--white); border-radius: 12px; border: 1px solid var(--grey-border); padding: 14px 12px; text-align: center; cursor: pointer; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: all 0.15s; }
   .quick-card:active { transform: scale(0.97); }
   .quick-card .q-icon { font-size: 26px; }
   .quick-card .q-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--grey-dark); line-height: 1.2; }
   .quick-card .q-sub { font-size: 11px; color: var(--grey-light); }
 
-  .divider-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--grey-light);
-    margin: 18px 0 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .divider-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--grey-light); margin: 18px 0 8px; display: flex; align-items: center; gap: 8px; }
   .divider-label::after { content: ''; flex: 1; height: 1px; background: var(--grey-border); }
+
+  /* INSTALL BANNER */
+  #install-banner { display: none; position: fixed; bottom: calc(var(--nav-h) + 10px); left: 12px; right: 12px; background: var(--grey-dark); border-radius: 12px; padding: 12px 16px; z-index: 200; flex-direction: row; align-items: center; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  #install-banner.show { display: flex; animation: fadeUp 0.3s ease; }
+  #install-banner .ib-text { flex: 1; }
+  #install-banner .ib-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: var(--white); letter-spacing: 0.5px; }
+  #install-banner .ib-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+  #install-banner .ib-install { background: var(--yellow); color: var(--grey-dark); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.5px; padding: 8px 14px; cursor: pointer; flex-shrink: 0; }
+  #install-banner .ib-close { color: #777; font-size: 20px; cursor: pointer; flex-shrink: 0; line-height: 1; padding: 4px; }
 </style>
 </head>
 <body>
+
+<!-- INSTALL BANNER (Android/Chrome) -->
+<div id="install-banner">
+  <div class="ib-text">
+    <div class="ib-title">📱 Install Staff Portal</div>
+    <div class="ib-sub">Add to your home screen for quick access</div>
+  </div>
+  <button class="ib-install" onclick="installApp()">Install</button>
+  <span class="ib-close" onclick="dismissBanner()">✕</span>
+</div>
 
 <!-- HEADER -->
 <div class="app-header">
@@ -331,128 +157,28 @@
 <!-- SCROLL BODY -->
 <div class="scroll-body">
 
-  <!-- ══════════ HOME SCREEN ══════════ -->
+  <!-- HOME SCREEN -->
   <div class="screen active" id="screen-home">
-
-    <!-- Quick access grid -->
     <div class="divider-label">Quick Access</div>
     <div class="quick-grid">
       <a class="quick-card" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank">
-        <div class="q-icon">📦</div>
-        <div class="q-label">Stock Order</div>
-        <div class="q-sub">Place an order</div>
+        <div class="q-icon">📦</div><div class="q-label">Stock Order</div><div class="q-sub">Place an order</div>
       </a>
       <a class="quick-card" href="https://mendabathrenew.github.io/Mendabath-Stock-Take/" target="_blank">
-        <div class="q-icon">📋</div>
-        <div class="q-label">Stock Take</div>
-        <div class="q-sub">Monthly sheet</div>
+        <div class="q-icon">📋</div><div class="q-label">Stock Take</div><div class="q-sub">Monthly sheet</div>
       </a>
       <a class="quick-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank">
-        <div class="q-icon">🔧</div>
-        <div class="q-label">Maintenance</div>
-        <div class="q-sub">Equipment check</div>
+        <div class="q-icon">🔧</div><div class="q-label">Maintenance</div><div class="q-sub">Equipment check</div>
       </a>
       <a class="quick-card" href="https://drive.google.com/drive/folders/14PZPWW7W-o9TYco92HRhXv9uqJsApHHh?usp=sharing" target="_blank">
-        <div class="q-icon">📸</div>
-        <div class="q-label">Submit Images</div>
-        <div class="q-sub">Google Drive</div>
+        <div class="q-icon">📸</div><div class="q-label">Submit Images</div><div class="q-sub">Google Drive</div>
       </a>
     </div>
-
-    <!-- Stock Management -->
-    <div class="cat-header">📦 Stock Management</div>
-
-    <a class="link-card" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank">
-      <div class="card-icon ic-orange">📦</div>
-      <div class="card-text">
-        <div class="card-title">Stock Order</div>
-        <div class="card-desc">Create and manage stock orders</div>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <a class="link-card" href="https://mendabathrenew.github.io/Mendabath-Stock-Take/" target="_blank">
-      <div class="card-icon ic-blue">📊</div>
-      <div class="card-text">
-        <div class="card-title">Stock Take</div>
-        <div class="card-desc">Conduct monthly inventory stock takes</div>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <a class="link-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank">
-      <div class="card-icon ic-grey">🔧</div>
-      <div class="card-text">
-        <div class="card-title">Monthly Maintenance</div>
-        <div class="card-desc">Track monthly maintenance tasks</div>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <!-- HR & Safety -->
-    <div class="cat-header">👥 HR &amp; Safety</div>
-
-    <a class="link-card" href="https://app.brighthr.com/dashboard" target="_blank">
-      <div class="card-icon ic-purple">👥</div>
-      <div class="card-text">
-        <div class="card-title">Bright HR</div>
-        <div class="card-desc">HR management and employee records</div>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <a class="link-card" href="https://app.brightsafe.com/" target="_blank">
-      <div class="card-icon ic-teal">🛡️</div>
-      <div class="card-text">
-        <div class="card-title">Bright Safe</div>
-        <div class="card-desc">Health &amp; safety documentation</div>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <!-- Documentation -->
-    <div class="cat-header">📄 Documentation</div>
-
-    <a class="link-card" href="https://mendabathuk-my.sharepoint.com/:f:/g/personal/info_mendabath_co_uk/IgBhmyD002IrSb_Fc-Rph_iJARwbFyxr4eGsqv2LS7tyAIc?e=kenboT" target="_blank">
-      <div class="card-icon ic-orange">📋</div>
-      <div class="card-text">
-        <div class="card-title">Company SOPs</div>
-        <div class="card-desc">Standard Operating Procedures library</div>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <a class="link-card" href="https://mendabathuk-my.sharepoint.com/:f:/g/personal/info_mendabath_co_uk/IgCtltuhwSQqSIQpl5CvW1PIAZ0x2fSBiq2ZhAS42T6-9xU?e=1NYElI" target="_blank">
-      <div class="card-icon ic-blue">📖</div>
-      <div class="card-text">
-        <div class="card-title">Policies &amp; Procedures</div>
-        <div class="card-desc">Company policies and guidelines</div>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <!-- Files -->
-    <div class="cat-header">☁️ Files &amp; Media</div>
-
-    <a class="link-card" href="https://drive.google.com/drive/folders/14PZPWW7W-o9TYco92HRhXv9uqJsApHHh?usp=sharing" target="_blank">
-      <div class="card-icon ic-yellow">📸</div>
-      <div class="card-text">
-        <div class="card-title">Submit Images</div>
-        <div class="card-desc">Upload job photos to Google Drive</div>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-  </div><!-- /screen-home -->
-
-  <!-- ══════════ SERVICES SCREEN ══════════ -->
-  <div class="screen" id="screen-services">
-    <div class="screen-title">All Tools</div>
 
     <div class="cat-header">📦 Stock Management</div>
     <a class="link-card" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">Create and manage stock orders</div></div><div class="arrow">›</div></a>
     <a class="link-card" href="https://mendabathrenew.github.io/Mendabath-Stock-Take/" target="_blank"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">Conduct monthly inventory stock takes</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">Track monthly equipment maintenance</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">Track monthly maintenance tasks</div></div><div class="arrow">›</div></a>
 
     <div class="cat-header">👥 HR &amp; Safety</div>
     <a class="link-card" href="https://app.brighthr.com/dashboard" target="_blank"><div class="card-icon ic-purple">👥</div><div class="card-text"><div class="card-title">Bright HR</div><div class="card-desc">HR management and employee records</div></div><div class="arrow">›</div></a>
@@ -466,7 +192,24 @@
     <a class="link-card" href="https://drive.google.com/drive/folders/14PZPWW7W-o9TYco92HRhXv9uqJsApHHh?usp=sharing" target="_blank"><div class="card-icon ic-yellow">📸</div><div class="card-text"><div class="card-title">Submit Images</div><div class="card-desc">Upload job photos to Google Drive</div></div><div class="arrow">›</div></a>
   </div>
 
-  <!-- ══════════ ABOUT SCREEN ══════════ -->
+  <!-- SERVICES SCREEN -->
+  <div class="screen" id="screen-services">
+    <div class="screen-title">All Tools</div>
+    <div class="cat-header">📦 Stock Management</div>
+    <a class="link-card" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">Create and manage stock orders</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="https://mendabathrenew.github.io/Mendabath-Stock-Take/" target="_blank"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">Conduct monthly inventory stock takes</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">Track monthly equipment maintenance</div></div><div class="arrow">›</div></a>
+    <div class="cat-header">👥 HR &amp; Safety</div>
+    <a class="link-card" href="https://app.brighthr.com/dashboard" target="_blank"><div class="card-icon ic-purple">👥</div><div class="card-text"><div class="card-title">Bright HR</div><div class="card-desc">HR management and employee records</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="https://app.brightsafe.com/" target="_blank"><div class="card-icon ic-teal">🛡️</div><div class="card-text"><div class="card-title">Bright Safe</div><div class="card-desc">Health &amp; safety documentation</div></div><div class="arrow">›</div></a>
+    <div class="cat-header">📄 Documentation</div>
+    <a class="link-card" href="https://mendabathuk-my.sharepoint.com/:f:/g/personal/info_mendabath_co_uk/IgBhmyD002IrSb_Fc-Rph_iJARwbFyxr4eGsqv2LS7tyAIc?e=kenboT" target="_blank"><div class="card-icon ic-orange">📋</div><div class="card-text"><div class="card-title">Company SOPs</div><div class="card-desc">Standard Operating Procedures library</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="https://mendabathuk-my.sharepoint.com/:f:/g/personal/info_mendabath_co_uk/IgCtltuhwSQqSIQpl5CvW1PIAZ0x2fSBiq2ZhAS42T6-9xU?e=1NYElI" target="_blank"><div class="card-icon ic-blue">📖</div><div class="card-text"><div class="card-title">Policies &amp; Procedures</div><div class="card-desc">Company policies and guidelines</div></div><div class="arrow">›</div></a>
+    <div class="cat-header">☁️ Files &amp; Media</div>
+    <a class="link-card" href="https://drive.google.com/drive/folders/14PZPWW7W-o9TYco92HRhXv9uqJsApHHh?usp=sharing" target="_blank"><div class="card-icon ic-yellow">📸</div><div class="card-text"><div class="card-title">Submit Images</div><div class="card-desc">Upload job photos to Google Drive</div></div><div class="arrow">›</div></a>
+  </div>
+
+  <!-- ABOUT SCREEN -->
   <div class="screen" id="screen-about">
     <div class="about-card">
       <div class="about-hero">
@@ -475,85 +218,34 @@
         <p>Staff Portal · Internal Resources</p>
       </div>
       <div class="about-body">
-        <div class="about-row">
-          <div class="icon">🌐</div>
-          <div class="info">
-            <div class="label">Website</div>
-            <div class="val"><a href="https://www.mendabath.co.uk" target="_blank">www.mendabath.co.uk</a></div>
-          </div>
-        </div>
-        <div class="about-row">
-          <div class="icon">📧</div>
-          <div class="info">
-            <div class="label">Email</div>
-            <div class="val"><a href="mailto:info@mendabath.co.uk">info@mendabath.co.uk</a></div>
-          </div>
-        </div>
-        <div class="about-row">
-          <div class="icon">📞</div>
-          <div class="info">
-            <div class="label">Phone</div>
-            <div class="val"><a href="tel:08003284324">0800 328 4324</a></div>
-          </div>
-        </div>
-        <div class="about-row">
-          <div class="icon">📱</div>
-          <div class="info">
-            <div class="label">Staff Portal</div>
-            <div class="val">Version 1.0 · Mendabath Internal</div>
-          </div>
-        </div>
+        <div class="about-row"><div class="icon">🌐</div><div class="info"><div class="label">Website</div><div class="val"><a href="https://www.mendabath.co.uk" target="_blank">www.mendabath.co.uk</a></div></div></div>
+        <div class="about-row"><div class="icon">📧</div><div class="info"><div class="label">Email</div><div class="val"><a href="mailto:info@mendabath.co.uk">info@mendabath.co.uk</a></div></div></div>
+        <div class="about-row"><div class="icon">📞</div><div class="info"><div class="label">Phone</div><div class="val"><a href="tel:08003284324">0800 328 4324</a></div></div></div>
+        <div class="about-row"><div class="icon">📱</div><div class="info"><div class="label">Staff Portal</div><div class="val">Version 1.0 · Mendabath Internal</div></div></div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════ CONTACT SCREEN ══════════ -->
+  <!-- CONTACT SCREEN -->
   <div class="screen" id="screen-contact">
     <div class="screen-title">Contact</div>
-
     <div class="contact-card">
       <div class="contact-card-header">📞 Get in Touch</div>
-      <a class="contact-row" href="tel:08003284324">
-        <div class="c-icon">📞</div>
-        <div class="c-info"><div class="c-label">Freephone</div><div class="c-val">0800 328 4324</div></div>
-        <div class="c-arrow">›</div>
-      </a>
-      <a class="contact-row" href="mailto:info@mendabath.co.uk">
-        <div class="c-icon">📧</div>
-        <div class="c-info"><div class="c-label">Email</div><div class="c-val">info@mendabath.co.uk</div></div>
-        <div class="c-arrow">›</div>
-      </a>
-      <a class="contact-row" href="https://www.mendabath.co.uk" target="_blank">
-        <div class="c-icon">🌐</div>
-        <div class="c-info"><div class="c-label">Website</div><div class="c-val">www.mendabath.co.uk</div></div>
-        <div class="c-arrow">›</div>
-      </a>
+      <a class="contact-row" href="tel:08003284324"><div class="c-icon">📞</div><div class="c-info"><div class="c-label">Freephone</div><div class="c-val">0800 328 4324</div></div><div class="c-arrow">›</div></a>
+      <a class="contact-row" href="mailto:info@mendabath.co.uk"><div class="c-icon">📧</div><div class="c-info"><div class="c-label">Email</div><div class="c-val">info@mendabath.co.uk</div></div><div class="c-arrow">›</div></a>
+      <a class="contact-row" href="https://www.mendabath.co.uk" target="_blank"><div class="c-icon">🌐</div><div class="c-info"><div class="c-label">Website</div><div class="c-val">www.mendabath.co.uk</div></div><div class="c-arrow">›</div></a>
     </div>
-
     <div class="contact-card">
       <div class="contact-card-header">🔗 Quick Links</div>
-      <a class="contact-row" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank">
-        <div class="c-icon">📦</div>
-        <div class="c-info"><div class="c-label">Stock Management</div><div class="c-val">Stock Order Form</div></div>
-        <div class="c-arrow">›</div>
-      </a>
-      <a class="contact-row" href="https://app.brighthr.com/dashboard" target="_blank">
-        <div class="c-icon">👥</div>
-        <div class="c-info"><div class="c-label">HR Portal</div><div class="c-val">Bright HR Dashboard</div></div>
-        <div class="c-arrow">›</div>
-      </a>
-      <a class="contact-row" href="https://app.brightsafe.com/" target="_blank">
-        <div class="c-icon">🛡️</div>
-        <div class="c-info"><div class="c-label">Safety</div><div class="c-val">Bright Safe Portal</div></div>
-        <div class="c-arrow">›</div>
-      </a>
+      <a class="contact-row" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank"><div class="c-icon">📦</div><div class="c-info"><div class="c-label">Stock Management</div><div class="c-val">Stock Order Form</div></div><div class="c-arrow">›</div></a>
+      <a class="contact-row" href="https://app.brighthr.com/dashboard" target="_blank"><div class="c-icon">👥</div><div class="c-info"><div class="c-label">HR Portal</div><div class="c-val">Bright HR Dashboard</div></div><div class="c-arrow">›</div></a>
+      <a class="contact-row" href="https://app.brightsafe.com/" target="_blank"><div class="c-icon">🛡️</div><div class="c-info"><div class="c-label">Safety</div><div class="c-val">Bright Safe Portal</div></div><div class="c-arrow">›</div></a>
     </div>
   </div>
 
-  <!-- ══════════ LINKS SCREEN ══════════ -->
+  <!-- LINKS SCREEN -->
   <div class="screen" id="screen-links">
     <div class="screen-title">All Links</div>
-
     <a class="link-card" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
     <a class="link-card" href="https://mendabathrenew.github.io/Mendabath-Stock-Take/" target="_blank"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
     <a class="link-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
@@ -568,35 +260,61 @@
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <button class="nav-item active" id="nav-home" onclick="showScreen('home')">
-    <div class="nav-icon">🏠</div>
-    <span>Home</span>
-  </button>
-  <button class="nav-item" id="nav-services" onclick="showScreen('services')">
-    <div class="nav-icon">🔨</div>
-    <span>Services</span>
-  </button>
-  <button class="nav-item" id="nav-about" onclick="showScreen('about')">
-    <div class="nav-icon">ℹ️</div>
-    <span>About</span>
-  </button>
-  <button class="nav-item" id="nav-contact" onclick="showScreen('contact')">
-    <div class="nav-icon">📞</div>
-    <span>Contact</span>
-  </button>
-  <button class="nav-item" id="nav-links" onclick="showScreen('links')">
-    <div class="nav-icon">🔗</div>
-    <span>Links</span>
-  </button>
+  <button class="nav-item active" id="nav-home" onclick="showScreen('home')"><div class="nav-icon">🏠</div><span>Home</span></button>
+  <button class="nav-item" id="nav-services" onclick="showScreen('services')"><div class="nav-icon">🔨</div><span>Services</span></button>
+  <button class="nav-item" id="nav-about" onclick="showScreen('about')"><div class="nav-icon">ℹ️</div><span>About</span></button>
+  <button class="nav-item" id="nav-contact" onclick="showScreen('contact')"><div class="nav-icon">📞</div><span>Contact</span></button>
+  <button class="nav-item" id="nav-links" onclick="showScreen('links')"><div class="nav-icon">🔗</div><span>Links</span></button>
 </nav>
 
 <script>
+// ── NAVIGATION ────────────────────────────────────────────
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
   document.querySelector('.scroll-body').scrollTop = 0;
+}
+
+// ── PWA INSTALL (Android/Chrome) ──────────────────────────
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show install banner after 2 seconds
+  setTimeout(() => {
+    document.getElementById('install-banner').classList.add('show');
+  }, 2000);
+});
+
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      dismissBanner();
+    });
+  }
+}
+
+function dismissBanner() {
+  document.getElementById('install-banner').classList.remove('show');
+}
+
+window.addEventListener('appinstalled', () => {
+  dismissBanner();
+  deferredPrompt = null;
+});
+
+// ── SERVICE WORKER ────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW error:', err));
+  });
 }
 </script>
 </body>
