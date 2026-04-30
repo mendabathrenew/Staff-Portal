@@ -17,71 +17,127 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --yellow: #F2D60A;
-    --yellow-dark: #d4bc00;
-    --grey-dark: #2E2E2E;
-    --grey-mid: #4A4A4A;
-    --grey-light: #6B6B6B;
-    --grey-bg: #F2F2F0;
-    --grey-border: #E2E2DE;
-    --white: #FFFFFF;
-    --nav-h: 64px;
+    --yellow: #F2D60A; --yellow-dark: #d4bc00; --grey-dark: #2E2E2E;
+    --grey-mid: #4A4A4A; --grey-light: #6B6B6B; --grey-bg: #F2F2F0;
+    --grey-border: #E2E2DE; --white: #FFFFFF; --nav-h: 64px;
+    --red: #C62828; --green: #2E7D32;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; font-family: 'Barlow', sans-serif; background: var(--grey-bg); color: var(--grey-dark); overscroll-behavior: none; }
 
-  html, body {
-    height: 100%;
-    font-family: 'Barlow', sans-serif;
-    background: var(--grey-bg);
-    color: var(--grey-dark);
-    overscroll-behavior: none;
+  /* ── LOGIN / REGISTER SCREENS ── */
+  #auth-wrap {
+    position: fixed; inset: 0; background: var(--grey-dark);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; z-index: 9999; padding: 24px;
   }
+  #auth-wrap.hidden { display: none; }
 
-  /* HEADER */
-  .app-header { background: var(--grey-dark); padding: 52px 20px 20px; }
-  .app-header .logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .auth-logo { background: var(--yellow); border-radius: 12px; padding: 10px 20px; display: flex; flex-direction: column; align-items: center; line-height: 1.2; margin-bottom: 24px; }
+  .auth-logo span:first-child { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; color: var(--grey-dark); }
+  .auth-logo span:last-child  { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; color: var(--grey-dark); letter-spacing: 2px; }
+
+  .auth-card { background: #3a3a3a; border-radius: 16px; padding: 28px 24px; width: 100%; max-width: 360px; }
+  .auth-card h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; color: var(--white); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .auth-card p { font-size: 13px; color: #aaa; margin-bottom: 24px; line-height: 1.5; }
+
+  .auth-field { margin-bottom: 16px; }
+  .auth-field label { display: block; font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .auth-field input, .auth-field select {
+    width: 100%; padding: 12px 14px; border-radius: 9px; border: 1.5px solid #555;
+    background: #2E2E2E; color: var(--white); font-family: 'Barlow', sans-serif;
+    font-size: 16px; outline: none; transition: border-color 0.2s;
+    appearance: none; -webkit-appearance: none;
+  }
+  .auth-field input:focus, .auth-field select:focus { border-color: var(--yellow); }
+  .auth-field select option { background: #2E2E2E; }
+  .auth-field input::placeholder { color: #666; }
+
+  /* PIN pad */
+  .pin-display { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+  .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #666; background: transparent; transition: all 0.15s; }
+  .pin-dot.filled { background: var(--yellow); border-color: var(--yellow); }
+
+  .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .pin-btn {
+    background: #444; border: none; border-radius: 10px; color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;
+    padding: 16px; cursor: pointer; transition: all 0.12s; text-align: center;
+  }
+  .pin-btn:active { background: var(--yellow); color: var(--grey-dark); transform: scale(0.95); }
+  .pin-btn.del { background: #555; font-size: 18px; }
+  .pin-btn.del:active { background: #C62828; }
+  .pin-btn.zero { grid-column: 2; }
+
+  .auth-btn {
+    width: 100%; padding: 14px; border-radius: 10px; border: none;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+    font-size: 18px; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.18s; margin-bottom: 12px;
+  }
+  .auth-btn-primary { background: var(--yellow); color: var(--grey-dark); }
+  .auth-btn-primary:hover { background: var(--yellow-dark); }
+  .auth-btn-secondary { background: transparent; color: #aaa; border: 1.5px solid #555; font-size: 14px; padding: 11px; }
+  .auth-btn-secondary:hover { border-color: #888; color: var(--white); }
+
+  .auth-error { background: rgba(198,40,40,0.15); border: 1px solid rgba(198,40,40,0.4); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #ef9a9a; margin-bottom: 16px; display: none; }
+  .auth-error.show { display: block; }
+  .auth-success { background: rgba(46,125,50,0.15); border: 1px solid rgba(46,125,50,0.4); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #a5d6a7; margin-bottom: 16px; display: none; }
+  .auth-success.show { display: block; }
+
+  /* ── APP HEADER ── */
+  .app-header { background: var(--grey-dark); padding: 52px 20px 16px; }
+  .app-header .logo-row { display: flex; align-items: center; gap: 12px; }
   .logo-badge { background: var(--yellow); border-radius: 8px; padding: 5px 10px; display: flex; flex-direction: column; align-items: center; line-height: 1.15; flex-shrink: 0; }
-  .logo-badge span:first-child { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 12px; color: var(--grey-dark); letter-spacing: 0.5px; }
+  .logo-badge span:first-child { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 12px; color: var(--grey-dark); }
   .logo-badge span:last-child  { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 10px; color: var(--grey-dark); letter-spacing: 1px; }
-  .app-header h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 26px; color: var(--white); letter-spacing: 1px; text-transform: uppercase; }
-  .app-header p { font-size: 13px; color: #aaa; margin-top: 2px; }
+  .header-titles h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 24px; color: var(--white); letter-spacing: 1px; text-transform: uppercase; }
+  .header-titles p { font-size: 12px; color: #aaa; margin-top: 1px; }
 
-  /* SCROLL BODY */
+  /* Logged-in user pill in header */
+  .user-pill {
+    display: flex; align-items: center; gap: 8px; margin-top: 12px;
+    background: rgba(255,255,255,0.07); border-radius: 8px; padding: 8px 12px;
+  }
+  .user-pill .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--yellow); display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 13px; color: var(--grey-dark); flex-shrink: 0; }
+  .user-pill .u-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: var(--white); letter-spacing: 0.5px; flex: 1; }
+  .user-pill .u-role { font-size: 11px; color: #aaa; }
+  .user-pill .logout-btn { background: none; border: 1px solid #555; border-radius: 6px; color: #aaa; font-size: 11px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 4px 9px; cursor: pointer; transition: all 0.15s; }
+  .user-pill .logout-btn:hover { border-color: #C62828; color: #ef9a9a; }
+
+  /* ── SCROLL BODY ── */
   .scroll-body { overflow-y: auto; padding: 16px 16px calc(var(--nav-h) + 20px); -webkit-overflow-scrolling: touch; }
 
-  /* SCREENS */
+  /* ── SCREENS ── */
   .screen { display: none; }
   .screen.active { display: block; animation: fadeUp 0.25s ease; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* CATEGORY HEADER */
+  /* ── CATEGORY HEADER ── */
   .cat-header { background: var(--yellow); border-radius: 10px; padding: 10px 14px; margin: 20px 0 10px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; color: var(--grey-dark); }
   .cat-header:first-child { margin-top: 4px; }
 
-  /* LINK CARD */
+  /* ── LINK CARD ── */
   .link-card { background: var(--white); border-radius: 12px; border: 1px solid var(--grey-border); display: flex; align-items: center; gap: 14px; padding: 14px 16px; margin-bottom: 10px; text-decoration: none; color: inherit; transition: all 0.15s; cursor: pointer; -webkit-user-select: none; user-select: none; }
   .link-card:active { transform: scale(0.98); background: #f8f8f5; }
   .link-card .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
   .link-card .card-text { flex: 1; min-width: 0; }
-  .link-card .card-title { font-weight: 600; font-size: 15px; color: var(--grey-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .link-card .card-desc { font-size: 12px; color: var(--grey-light); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .link-card .arrow { color: #ccc; font-size: 18px; flex-shrink: 0; margin-left: 4px; }
+  .link-card .card-title { font-weight: 600; font-size: 15px; color: var(--grey-dark); }
+  .link-card .card-desc { font-size: 12px; color: var(--grey-light); margin-top: 2px; }
+  .link-card .arrow { color: #ccc; font-size: 18px; flex-shrink: 0; }
 
-  .ic-yellow  { background: #FFF8C2; }
-  .ic-blue    { background: #E3F0FF; }
-  .ic-orange  { background: #FFF3E0; }
-  .ic-purple  { background: #F3E5F5; }
-  .ic-teal    { background: #E0F7FA; }
-  .ic-grey    { background: #F5F5F5; }
+  .ic-yellow { background: #FFF8C2; } .ic-blue { background: #E3F0FF; }
+  .ic-orange { background: #FFF3E0; } .ic-purple { background: #F3E5F5; }
+  .ic-teal   { background: #E0F7FA; } .ic-grey   { background: #F5F5F5; }
 
-  /* BOTTOM NAV */
+  /* ── BOTTOM NAV ── */
   .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h); background: var(--white); border-top: 1px solid var(--grey-border); display: flex; align-items: stretch; z-index: 100; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 12px rgba(0,0,0,0.06); }
-  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; border: none; background: none; padding: 8px 4px; color: #aaa; font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; transition: color 0.15s; -webkit-tap-highlight-color: transparent; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; border: none; background: none; padding: 8px 4px; color: #aaa; font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; transition: color 0.15s; }
   .nav-item.active { color: var(--grey-dark); }
   .nav-item .nav-icon { font-size: 20px; line-height: 1; }
 
-  /* ABOUT SCREEN */
+  /* ── ABOUT / CONTACT ── */
   .about-card { background: var(--white); border-radius: 14px; border: 1px solid var(--grey-border); overflow: hidden; margin-bottom: 14px; }
   .about-hero { background: var(--grey-dark); padding: 28px 24px; text-align: center; }
   .about-hero .big-badge { background: var(--yellow); display: inline-flex; flex-direction: column; align-items: center; border-radius: 12px; padding: 10px 18px; margin-bottom: 14px; line-height: 1.2; }
@@ -97,7 +153,6 @@
   .about-row .info .val { font-size: 14px; color: var(--grey-dark); margin-top: 1px; }
   .about-row .info a { color: var(--grey-dark); text-decoration: none; }
 
-  /* CONTACT SCREEN */
   .contact-card { background: var(--white); border-radius: 14px; border: 1px solid var(--grey-border); margin-bottom: 12px; overflow: hidden; }
   .contact-card-header { background: var(--grey-dark); padding: 10px 16px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--yellow); }
   .contact-row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--grey-border); text-decoration: none; color: inherit; transition: background 0.15s; }
@@ -110,7 +165,7 @@
 
   .screen-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: 1px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 16px; margin-top: 4px; }
 
-  /* QUICK GRID */
+  /* ── QUICK GRID ── */
   .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 6px; }
   .quick-card { background: var(--white); border-radius: 12px; border: 1px solid var(--grey-border); padding: 14px 12px; text-align: center; cursor: pointer; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: all 0.15s; }
   .quick-card:active { transform: scale(0.97); }
@@ -121,53 +176,183 @@
   .divider-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--grey-light); margin: 18px 0 8px; display: flex; align-items: center; gap: 8px; }
   .divider-label::after { content: ''; flex: 1; height: 1px; background: var(--grey-border); }
 
-  /* INSTALL BANNER */
+  /* ── INSTALL BANNER ── */
   #install-banner { display: none; position: fixed; bottom: calc(var(--nav-h) + 10px); left: 12px; right: 12px; background: var(--grey-dark); border-radius: 12px; padding: 12px 16px; z-index: 200; flex-direction: row; align-items: center; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
   #install-banner.show { display: flex; animation: fadeUp 0.3s ease; }
   #install-banner .ib-text { flex: 1; }
-  #install-banner .ib-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: var(--white); letter-spacing: 0.5px; }
+  #install-banner .ib-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: var(--white); }
   #install-banner .ib-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
-  #install-banner .ib-install { background: var(--yellow); color: var(--grey-dark); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.5px; padding: 8px 14px; cursor: pointer; flex-shrink: 0; }
-  #install-banner .ib-close { color: #777; font-size: 20px; cursor: pointer; flex-shrink: 0; line-height: 1; padding: 4px; }
+  #install-banner .ib-install { background: var(--yellow); color: var(--grey-dark); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; padding: 8px 14px; cursor: pointer; }
+  #install-banner .ib-close { color: #777; font-size: 20px; cursor: pointer; padding: 4px; }
 </style>
 </head>
 <body>
 
-<!-- INSTALL BANNER (Android/Chrome) -->
+<!-- ══════════════════════════════════════════════
+     AUTH WRAP — shown until logged in
+════════════════════════════════════════════════ -->
+<div id="auth-wrap">
+  <div class="auth-logo"><span>MEND A</span><span>BATH</span></div>
+
+  <!-- LOGIN PANEL -->
+  <div class="auth-card" id="panel-login">
+    <h2>👋 Welcome Back</h2>
+    <p>Select your name and enter your 4-digit PIN to access the Staff Portal.</p>
+
+    <div class="auth-field">
+      <label>Your Name</label>
+      <select id="login-name">
+        <option value="">— Select your name —</option>
+        <optgroup label="Technicians">
+          <option>Cecil</option>
+          <option>David</option>
+          <option>Tyler</option>
+          <option>Peter</option>
+          <option>Richard</option>
+          <option>Stephen</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option>Grant</option>
+          <option>Lynne</option>
+          <option>Nicky</option>
+          <option>Ayesha</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="auth-field">
+      <label>Your PIN</label>
+      <div class="pin-display" id="login-pin-display">
+        <div class="pin-dot" id="login-d0"></div>
+        <div class="pin-dot" id="login-d1"></div>
+        <div class="pin-dot" id="login-d2"></div>
+        <div class="pin-dot" id="login-d3"></div>
+      </div>
+      <div class="pin-pad">
+        <button class="pin-btn" onclick="pinPress('login',1)">1</button>
+        <button class="pin-btn" onclick="pinPress('login',2)">2</button>
+        <button class="pin-btn" onclick="pinPress('login',3)">3</button>
+        <button class="pin-btn" onclick="pinPress('login',4)">4</button>
+        <button class="pin-btn" onclick="pinPress('login',5)">5</button>
+        <button class="pin-btn" onclick="pinPress('login',6)">6</button>
+        <button class="pin-btn" onclick="pinPress('login',7)">7</button>
+        <button class="pin-btn" onclick="pinPress('login',8)">8</button>
+        <button class="pin-btn" onclick="pinPress('login',9)">9</button>
+        <button class="pin-btn del" onclick="pinDel('login')">⌫</button>
+        <button class="pin-btn zero" onclick="pinPress('login',0)">0</button>
+      </div>
+    </div>
+
+    <div class="auth-error" id="login-error">Incorrect name or PIN. Please try again.</div>
+    <button class="auth-btn auth-btn-primary" onclick="doLogin()">Sign In →</button>
+    <button class="auth-btn auth-btn-secondary" onclick="showPanel('register')">First time? Set up your PIN</button>
+  </div>
+
+  <!-- REGISTER PANEL -->
+  <div class="auth-card" id="panel-register" style="display:none">
+    <h2>🔐 Set Your PIN</h2>
+    <p>Choose your name and create a 4-digit PIN. You'll use this every time you log in.</p>
+
+    <div class="auth-field">
+      <label>Your Name</label>
+      <select id="reg-name">
+        <option value="">— Select your name —</option>
+        <optgroup label="Technicians">
+          <option>Cecil</option>
+          <option>David</option>
+          <option>Tyler</option>
+          <option>Peter</option>
+          <option>Richard</option>
+          <option>Stephen</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option>Grant</option>
+          <option>Lynne</option>
+          <option>Nicky</option>
+          <option>Ayesha</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="auth-field">
+      <label>Create a 4-digit PIN</label>
+      <div class="pin-display" id="reg-pin-display">
+        <div class="pin-dot" id="reg-d0"></div>
+        <div class="pin-dot" id="reg-d1"></div>
+        <div class="pin-dot" id="reg-d2"></div>
+        <div class="pin-dot" id="reg-d3"></div>
+      </div>
+      <div class="pin-pad">
+        <button class="pin-btn" onclick="pinPress('reg',1)">1</button>
+        <button class="pin-btn" onclick="pinPress('reg',2)">2</button>
+        <button class="pin-btn" onclick="pinPress('reg',3)">3</button>
+        <button class="pin-btn" onclick="pinPress('reg',4)">4</button>
+        <button class="pin-btn" onclick="pinPress('reg',5)">5</button>
+        <button class="pin-btn" onclick="pinPress('reg',6)">6</button>
+        <button class="pin-btn" onclick="pinPress('reg',7)">7</button>
+        <button class="pin-btn" onclick="pinPress('reg',8)">8</button>
+        <button class="pin-btn" onclick="pinPress('reg',9)">9</button>
+        <button class="pin-btn del" onclick="pinDel('reg')">⌫</button>
+        <button class="pin-btn zero" onclick="pinPress('reg',0)">0</button>
+      </div>
+    </div>
+
+    <div class="auth-error"   id="reg-error"></div>
+    <div class="auth-success" id="reg-success">PIN saved! You can now sign in.</div>
+    <button class="auth-btn auth-btn-primary" onclick="doRegister()">Save PIN →</button>
+    <button class="auth-btn auth-btn-secondary" onclick="showPanel('login')">← Back to Sign In</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     INSTALL BANNER
+════════════════════════════════════════════════ -->
 <div id="install-banner">
   <div class="ib-text">
     <div class="ib-title">📱 Install Staff Portal</div>
-    <div class="ib-sub">Add to your home screen for quick access</div>
+    <div class="ib-sub">Add to your home screen</div>
   </div>
   <button class="ib-install" onclick="installApp()">Install</button>
   <span class="ib-close" onclick="dismissBanner()">✕</span>
 </div>
 
-<!-- HEADER -->
+<!-- ══════════════════════════════════════════════
+     APP HEADER
+════════════════════════════════════════════════ -->
 <div class="app-header">
   <div class="logo-row">
     <div class="logo-badge"><span>MEND A</span><span>BATH</span></div>
-    <div>
+    <div class="header-titles">
       <h1>Staff Portal</h1>
       <p>Quick access to all staff resources</p>
     </div>
   </div>
+  <div class="user-pill" id="user-pill">
+    <div class="avatar" id="user-avatar">?</div>
+    <div>
+      <div class="u-name" id="user-name-display">—</div>
+      <div class="u-role">Technician</div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+  </div>
 </div>
 
-<!-- SCROLL BODY -->
+<!-- ══════════════════════════════════════════════
+     SCROLL BODY
+════════════════════════════════════════════════ -->
 <div class="scroll-body">
 
   <!-- HOME SCREEN -->
   <div class="screen active" id="screen-home">
     <div class="divider-label">Quick Access</div>
     <div class="quick-grid">
-      <a class="quick-card" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank">
+      <a class="quick-card" id="qc-order" href="#" onclick="openForm('order'); return false;">
         <div class="q-icon">📦</div><div class="q-label">Stock Order</div><div class="q-sub">Place an order</div>
       </a>
-      <a class="quick-card" href="https://mendabathrenew.github.io/Mendabath-Stock-Take/" target="_blank">
+      <a class="quick-card" id="qc-take" href="#" onclick="openForm('take'); return false;">
         <div class="q-icon">📋</div><div class="q-label">Stock Take</div><div class="q-sub">Monthly sheet</div>
       </a>
-      <a class="quick-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank">
+      <a class="quick-card" id="qc-maint" href="#" onclick="openForm('maint'); return false;">
         <div class="q-icon">🔧</div><div class="q-label">Maintenance</div><div class="q-sub">Equipment check</div>
       </a>
       <a class="quick-card" href="https://drive.google.com/drive/folders/14PZPWW7W-o9TYco92HRhXv9uqJsApHHh?usp=sharing" target="_blank">
@@ -176,9 +361,9 @@
     </div>
 
     <div class="cat-header">📦 Stock Management</div>
-    <a class="link-card" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">Create and manage stock orders</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathrenew.github.io/Mendabath-Stock-Take/" target="_blank"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">Conduct monthly inventory stock takes</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">Track monthly maintenance tasks</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="#" onclick="openForm('order'); return false;"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">Create and manage stock orders</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="#" onclick="openForm('take'); return false;"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">Conduct monthly inventory stock takes</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="#" onclick="openForm('maint'); return false;"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">Track monthly maintenance tasks</div></div><div class="arrow">›</div></a>
 
     <div class="cat-header">👥 HR &amp; Safety</div>
     <a class="link-card" href="https://app.brighthr.com/dashboard" target="_blank"><div class="card-icon ic-purple">👥</div><div class="card-text"><div class="card-title">Bright HR</div><div class="card-desc">HR management and employee records</div></div><div class="arrow">›</div></a>
@@ -196,9 +381,9 @@
   <div class="screen" id="screen-services">
     <div class="screen-title">All Tools</div>
     <div class="cat-header">📦 Stock Management</div>
-    <a class="link-card" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">Create and manage stock orders</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathrenew.github.io/Mendabath-Stock-Take/" target="_blank"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">Conduct monthly inventory stock takes</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">Track monthly equipment maintenance</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="#" onclick="openForm('order'); return false;"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">Create and manage stock orders</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="#" onclick="openForm('take'); return false;"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">Conduct monthly inventory stock takes</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="#" onclick="openForm('maint'); return false;"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">Track monthly equipment maintenance</div></div><div class="arrow">›</div></a>
     <div class="cat-header">👥 HR &amp; Safety</div>
     <a class="link-card" href="https://app.brighthr.com/dashboard" target="_blank"><div class="card-icon ic-purple">👥</div><div class="card-text"><div class="card-title">Bright HR</div><div class="card-desc">HR management and employee records</div></div><div class="arrow">›</div></a>
     <a class="link-card" href="https://app.brightsafe.com/" target="_blank"><div class="card-icon ic-teal">🛡️</div><div class="card-text"><div class="card-title">Bright Safe</div><div class="card-desc">Health &amp; safety documentation</div></div><div class="arrow">›</div></a>
@@ -221,7 +406,7 @@
         <div class="about-row"><div class="icon">🌐</div><div class="info"><div class="label">Website</div><div class="val"><a href="https://www.mendabath.co.uk" target="_blank">www.mendabath.co.uk</a></div></div></div>
         <div class="about-row"><div class="icon">📧</div><div class="info"><div class="label">Email</div><div class="val"><a href="mailto:info@mendabath.co.uk">info@mendabath.co.uk</a></div></div></div>
         <div class="about-row"><div class="icon">📞</div><div class="info"><div class="label">Phone</div><div class="val"><a href="tel:08003284324">0800 328 4324</a></div></div></div>
-        <div class="about-row"><div class="icon">📱</div><div class="info"><div class="label">Staff Portal</div><div class="val">Version 1.0 · Mendabath Internal</div></div></div>
+        <div class="about-row"><div class="icon">📱</div><div class="info"><div class="label">Staff Portal</div><div class="val">Version 2.0 · Mendabath Internal</div></div></div>
       </div>
     </div>
   </div>
@@ -237,7 +422,7 @@
     </div>
     <div class="contact-card">
       <div class="contact-card-header">🔗 Quick Links</div>
-      <a class="contact-row" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank"><div class="c-icon">📦</div><div class="c-info"><div class="c-label">Stock Management</div><div class="c-val">Stock Order Form</div></div><div class="c-arrow">›</div></a>
+      <a class="contact-row" href="#" onclick="openForm('order'); return false;"><div class="c-icon">📦</div><div class="c-info"><div class="c-label">Stock Management</div><div class="c-val">Stock Order Form</div></div><div class="c-arrow">›</div></a>
       <a class="contact-row" href="https://app.brighthr.com/dashboard" target="_blank"><div class="c-icon">👥</div><div class="c-info"><div class="c-label">HR Portal</div><div class="c-val">Bright HR Dashboard</div></div><div class="c-arrow">›</div></a>
       <a class="contact-row" href="https://app.brightsafe.com/" target="_blank"><div class="c-icon">🛡️</div><div class="c-info"><div class="c-label">Safety</div><div class="c-val">Bright Safe Portal</div></div><div class="c-arrow">›</div></a>
     </div>
@@ -246,9 +431,9 @@
   <!-- LINKS SCREEN -->
   <div class="screen" id="screen-links">
     <div class="screen-title">All Links</div>
-    <a class="link-card" href="https://mendabathrenew.github.io/Stock-Order/" target="_blank"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathrenew.github.io/Mendabath-Stock-Take/" target="_blank"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathrenew.github.io/Monthly-Maintenance/" target="_blank"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="#" onclick="openForm('order'); return false;"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="#" onclick="openForm('take'); return false;"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
+    <a class="link-card" href="#" onclick="openForm('maint'); return false;"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
     <a class="link-card" href="https://app.brighthr.com/dashboard" target="_blank"><div class="card-icon ic-purple">👥</div><div class="card-text"><div class="card-title">Bright HR</div><div class="card-desc">app.brighthr.com</div></div><div class="arrow">›</div></a>
     <a class="link-card" href="https://app.brightsafe.com/" target="_blank"><div class="card-icon ic-teal">🛡️</div><div class="card-text"><div class="card-title">Bright Safe</div><div class="card-desc">app.brightsafe.com</div></div><div class="arrow">›</div></a>
     <a class="link-card" href="https://mendabathuk-my.sharepoint.com/:f:/g/personal/info_mendabath_co_uk/IgBhmyD002IrSb_Fc-Rph_iJARwbFyxr4eGsqv2LS7tyAIc?e=kenboT" target="_blank"><div class="card-icon ic-orange">📋</div><div class="card-text"><div class="card-title">Company SOPs</div><div class="card-desc">SharePoint library</div></div><div class="arrow">›</div></a>
@@ -260,14 +445,161 @@
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <button class="nav-item active" id="nav-home" onclick="showScreen('home')"><div class="nav-icon">🏠</div><span>Home</span></button>
-  <button class="nav-item" id="nav-services" onclick="showScreen('services')"><div class="nav-icon">🔨</div><span>Services</span></button>
-  <button class="nav-item" id="nav-about" onclick="showScreen('about')"><div class="nav-icon">ℹ️</div><span>About</span></button>
-  <button class="nav-item" id="nav-contact" onclick="showScreen('contact')"><div class="nav-icon">📞</div><span>Contact</span></button>
-  <button class="nav-item" id="nav-links" onclick="showScreen('links')"><div class="nav-icon">🔗</div><span>Links</span></button>
+  <button class="nav-item active" id="nav-home"     onclick="showScreen('home')"><div class="nav-icon">🏠</div><span>Home</span></button>
+  <button class="nav-item"        id="nav-services" onclick="showScreen('services')"><div class="nav-icon">🔨</div><span>Services</span></button>
+  <button class="nav-item"        id="nav-about"    onclick="showScreen('about')"><div class="nav-icon">ℹ️</div><span>About</span></button>
+  <button class="nav-item"        id="nav-contact"  onclick="showScreen('contact')"><div class="nav-icon">📞</div><span>Contact</span></button>
+  <button class="nav-item"        id="nav-links"    onclick="showScreen('links')"><div class="nav-icon">🔗</div><span>Links</span></button>
 </nav>
 
 <script>
+// ── STORAGE KEY ───────────────────────────────────────────
+const STORE_KEY = 'mb_pins_v1';   // { name: hashedPin }
+const SESSION_KEY = 'mb_session'; // { name, expires }
+const SESSION_HOURS = 12;         // stay logged in for 12 hours
+
+// ── SIMPLE PIN HASH (not cryptographic — suitable for this use case) ─────────
+function hashPin(name, pin) {
+  // Combine name + pin + salt so two people with same PIN have different hashes
+  const str = 'mb2025' + name.toLowerCase() + pin;
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash.toString(36);
+}
+
+function getStore() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
+}
+function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+
+// ── SESSION ───────────────────────────────────────────────
+function getSession() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SESSION_KEY));
+    if (s && s.expires > Date.now()) return s;
+  } catch {}
+  return null;
+}
+function saveSession(name) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify({
+    name, expires: Date.now() + SESSION_HOURS * 60 * 60 * 1000
+  }));
+}
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+// ── PIN PAD LOGIC ─────────────────────────────────────────
+const pins = { login: '', reg: '' };
+
+function pinPress(ctx, digit) {
+  if (pins[ctx].length >= 4) return;
+  pins[ctx] += digit;
+  updatePinDisplay(ctx);
+}
+function pinDel(ctx) {
+  pins[ctx] = pins[ctx].slice(0, -1);
+  updatePinDisplay(ctx);
+}
+function updatePinDisplay(ctx) {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById(ctx + '-d' + i).classList.toggle('filled', i < pins[ctx].length);
+  }
+}
+function clearPin(ctx) { pins[ctx] = ''; updatePinDisplay(ctx); }
+
+// ── PANEL SWITCHING ───────────────────────────────────────
+function showPanel(p) {
+  document.getElementById('panel-login').style.display    = p === 'login'    ? 'block' : 'none';
+  document.getElementById('panel-register').style.display = p === 'register' ? 'block' : 'none';
+  clearPin('login'); clearPin('reg');
+  document.getElementById('login-error').classList.remove('show');
+  document.getElementById('reg-error').classList.remove('show');
+  document.getElementById('reg-success').classList.remove('show');
+}
+
+// ── LOGIN ─────────────────────────────────────────────────
+function doLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  const pin  = pins['login'];
+  const err  = document.getElementById('login-error');
+  err.classList.remove('show');
+
+  if (!name) { err.textContent = 'Please select your name.'; err.classList.add('show'); return; }
+  if (pin.length < 4) { err.textContent = 'Please enter your 4-digit PIN.'; err.classList.add('show'); return; }
+
+  const store = getStore();
+  const expected = store[name.toLowerCase()];
+
+  if (!expected) {
+    err.textContent = 'No PIN found for ' + name + '. Please set up your PIN first.';
+    err.classList.add('show'); clearPin('login'); return;
+  }
+  if (hashPin(name, pin) !== expected) {
+    err.textContent = 'Incorrect PIN. Please try again.';
+    err.classList.add('show'); clearPin('login'); return;
+  }
+
+  saveSession(name);
+  enterApp(name);
+}
+
+// ── REGISTER ──────────────────────────────────────────────
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const pin  = pins['reg'];
+  const err  = document.getElementById('reg-error');
+  const ok   = document.getElementById('reg-success');
+  err.classList.remove('show'); ok.classList.remove('show');
+
+  if (!name) { err.textContent = 'Please select your name.'; err.classList.add('show'); return; }
+  if (pin.length < 4) { err.textContent = 'Please enter a 4-digit PIN.'; err.classList.add('show'); return; }
+
+  const store = getStore();
+  // Allow re-registration (tech forgot their PIN) — just overwrite
+  store[name.toLowerCase()] = hashPin(name, pin);
+  saveStore(store);
+  clearPin('reg');
+  ok.classList.add('show');
+  setTimeout(() => { showPanel('login'); document.getElementById('login-name').value = name; }, 1800);
+}
+
+// ── ENTER APP ─────────────────────────────────────────────
+function enterApp(name) {
+  document.getElementById('auth-wrap').classList.add('hidden');
+  document.getElementById('user-name-display').textContent = name;
+  document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+  currentUser = name;
+}
+
+// ── LOGOUT ────────────────────────────────────────────────
+function doLogout() {
+  if (!confirm('Sign out of the Staff Portal?')) return;
+  clearSession();
+  currentUser = null;
+  document.getElementById('auth-wrap').classList.remove('hidden');
+  showPanel('login');
+  document.getElementById('login-name').value = '';
+}
+
+// ── OPEN FORM WITH AUTO-NAME ──────────────────────────────
+// Base URLs for each form
+const FORM_URLS = {
+  order: 'https://mendabathrenew.github.io/Stock-Order/',
+  take:  'https://mendabathrenew.github.io/Mendabath-Stock-Take/',
+  maint: 'https://mendabathrenew.github.io/Monthly-Maintenance/'
+};
+
+// The forms accept ?user=NAME in the URL — the form pages read this and pre-select the name
+// (You will also need to update each form's index.html to read this param — see note below)
+function openForm(type) {
+  if (!currentUser) return;
+  const base = FORM_URLS[type];
+  const url  = base + '?user=' + encodeURIComponent(currentUser);
+  window.open(url, '_blank');
+}
+
 // ── NAVIGATION ────────────────────────────────────────────
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -277,36 +609,30 @@ function showScreen(name) {
   document.querySelector('.scroll-body').scrollTop = 0;
 }
 
-// ── PWA INSTALL (Android/Chrome) ──────────────────────────
-let deferredPrompt = null;
+// ── BOOT ──────────────────────────────────────────────────
+let currentUser = null;
 
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // Show install banner after 2 seconds
-  setTimeout(() => {
-    document.getElementById('install-banner').classList.add('show');
-  }, 2000);
-});
-
-function installApp() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-      deferredPrompt = null;
-      dismissBanner();
-    });
+(function boot() {
+  const session = getSession();
+  if (session) {
+    enterApp(session.name);
+  } else {
+    document.getElementById('auth-wrap').classList.remove('hidden');
+    showPanel('login');
   }
-}
+})();
 
-function dismissBanner() {
-  document.getElementById('install-banner').classList.remove('show');
-}
-
-window.addEventListener('appinstalled', () => {
-  dismissBanner();
-  deferredPrompt = null;
+// ── PWA INSTALL ───────────────────────────────────────────
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  setTimeout(() => { document.getElementById('install-banner').classList.add('show'); }, 3000);
 });
+function installApp() {
+  if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { deferredPrompt = null; dismissBanner(); }); }
+}
+function dismissBanner() { document.getElementById('install-banner').classList.remove('show'); }
+window.addEventListener('appinstalled', () => { dismissBanner(); deferredPrompt = null; });
 
 // ── SERVICE WORKER ────────────────────────────────────────
 if ('serviceWorker' in navigator) {
