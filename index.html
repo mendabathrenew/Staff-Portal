@@ -1,647 +1,890 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Mendabath – Staff Portal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mend-A-Bath Staff Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<!-- PWA Meta Tags -->
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MB Portal">
-<meta name="theme-color" content="#2E2E2E">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #FFED00 0%, #FFD700 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --yellow: #F2D60A; --yellow-dark: #d4bc00; --grey-dark: #2E2E2E;
-    --grey-mid: #4A4A4A; --grey-light: #6B6B6B; --grey-bg: #F2F2F0;
-    --grey-border: #E2E2DE; --white: #FFFFFF; --nav-h: 64px;
-    --red: #C62828; --green: #2E7D32;
-  }
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; font-family: 'Barlow', sans-serif; background: var(--grey-bg); color: var(--grey-dark); overscroll-behavior: none; }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
 
-  /* ── LOGIN / REGISTER SCREENS ── */
-  #auth-wrap {
-    position: fixed; inset: 0; background: var(--grey-dark);
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; z-index: 9999; padding: 24px;
-  }
-  #auth-wrap.hidden { display: none; }
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
 
-  .auth-logo { background: var(--yellow); border-radius: 12px; padding: 10px 20px; display: flex; flex-direction: column; align-items: center; line-height: 1.2; margin-bottom: 24px; }
-  .auth-logo span:first-child { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; color: var(--grey-dark); }
-  .auth-logo span:last-child  { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; color: var(--grey-dark); letter-spacing: 2px; }
+        .logo {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
 
-  .auth-card { background: #3a3a3a; border-radius: 16px; padding: 28px 24px; width: 100%; max-width: 360px; }
-  .auth-card h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; color: var(--white); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
-  .auth-card p { font-size: 13px; color: #aaa; margin-bottom: 24px; line-height: 1.5; }
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2C2C2C;
+            margin-bottom: 8px;
+        }
 
-  .auth-field { margin-bottom: 16px; }
-  .auth-field label { display: block; font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
-  .auth-field input, .auth-field select {
-    width: 100%; padding: 12px 14px; border-radius: 9px; border: 1.5px solid #555;
-    background: #2E2E2E; color: var(--white); font-family: 'Barlow', sans-serif;
-    font-size: 16px; outline: none; transition: border-color 0.2s;
-    appearance: none; -webkit-appearance: none;
-  }
-  .auth-field input:focus, .auth-field select:focus { border-color: var(--yellow); }
-  .auth-field select option { background: #2E2E2E; }
-  .auth-field input::placeholder { color: #666; }
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+        }
 
-  /* PIN pad */
-  .pin-display { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
-  .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #666; background: transparent; transition: all 0.15s; }
-  .pin-dot.filled { background: var(--yellow); border-color: var(--yellow); }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-  .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-  .pin-btn {
-    background: #444; border: none; border-radius: 10px; color: var(--white);
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;
-    padding: 16px; cursor: pointer; transition: all 0.12s; text-align: center;
-  }
-  .pin-btn:active { background: var(--yellow); color: var(--grey-dark); transform: scale(0.95); }
-  .pin-btn.del { background: #555; font-size: 18px; }
-  .pin-btn.del:active { background: #C62828; }
-  .pin-btn.zero { grid-column: 2; }
+        .label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2C2C2C;
+            margin-bottom: 8px;
+        }
 
-  .auth-btn {
-    width: 100%; padding: 14px; border-radius: 10px; border: none;
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
-    font-size: 18px; letter-spacing: 1px; text-transform: uppercase;
-    cursor: pointer; transition: all 0.18s; margin-bottom: 12px;
-  }
-  .auth-btn-primary { background: var(--yellow); color: var(--grey-dark); }
-  .auth-btn-primary:hover { background: var(--yellow-dark); }
-  .auth-btn-secondary { background: transparent; color: #aaa; border: 1.5px solid #555; font-size: 14px; padding: 11px; }
-  .auth-btn-secondary:hover { border-color: #888; color: var(--white); }
+        .input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            background: #F5F5F5;
+            color: #2C2C2C;
+            transition: border-color 0.3s;
+        }
 
-  .auth-error { background: rgba(198,40,40,0.15); border: 1px solid rgba(198,40,40,0.4); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #ef9a9a; margin-bottom: 16px; display: none; }
-  .auth-error.show { display: block; }
-  .auth-success { background: rgba(46,125,50,0.15); border: 1px solid rgba(46,125,50,0.4); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #a5d6a7; margin-bottom: 16px; display: none; }
-  .auth-success.show { display: block; }
+        .input:focus {
+            outline: none;
+            border-color: #FFED00;
+            background: white;
+        }
 
-  /* ── APP HEADER ── */
-  .app-header { background: var(--grey-dark); padding: 52px 20px 16px; }
-  .app-header .logo-row { display: flex; align-items: center; gap: 12px; }
-  .logo-badge { background: var(--yellow); border-radius: 8px; padding: 5px 10px; display: flex; flex-direction: column; align-items: center; line-height: 1.15; flex-shrink: 0; }
-  .logo-badge span:first-child { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 12px; color: var(--grey-dark); }
-  .logo-badge span:last-child  { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 10px; color: var(--grey-dark); letter-spacing: 1px; }
-  .header-titles h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 24px; color: var(--white); letter-spacing: 1px; text-transform: uppercase; }
-  .header-titles p { font-size: 12px; color: #aaa; margin-top: 1px; }
+        .button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
 
-  /* Logged-in user pill in header */
-  .user-pill {
-    display: flex; align-items: center; gap: 8px; margin-top: 12px;
-    background: rgba(255,255,255,0.07); border-radius: 8px; padding: 8px 12px;
-  }
-  .user-pill .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--yellow); display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 13px; color: var(--grey-dark); flex-shrink: 0; }
-  .user-pill .u-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: var(--white); letter-spacing: 0.5px; flex: 1; }
-  .user-pill .u-role { font-size: 11px; color: #aaa; }
-  .user-pill .logout-btn { background: none; border: 1px solid #555; border-radius: 6px; color: #aaa; font-size: 11px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 4px 9px; cursor: pointer; transition: all 0.15s; }
-  .user-pill .logout-btn:hover { border-color: #C62828; color: #ef9a9a; }
+        .button-primary {
+            background: #FFED00;
+            color: #2C2C2C;
+        }
 
-  /* ── SCROLL BODY ── */
-  .scroll-body { overflow-y: auto; padding: 16px 16px calc(var(--nav-h) + 20px); -webkit-overflow-scrolling: touch; }
+        .button-primary:hover {
+            background: #FFD700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 237, 0, 0.3);
+        }
 
-  /* ── SCREENS ── */
-  .screen { display: none; }
-  .screen.active { display: block; animation: fadeUp 0.25s ease; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .button-primary:active {
+            transform: translateY(0);
+        }
 
-  /* ── CATEGORY HEADER ── */
-  .cat-header { background: var(--yellow); border-radius: 10px; padding: 10px 14px; margin: 20px 0 10px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; color: var(--grey-dark); }
-  .cat-header:first-child { margin-top: 4px; }
+        .button-secondary {
+            background: transparent;
+            color: #FFED00;
+            border: 2px solid #FFED00;
+            margin-top: 12px;
+        }
 
-  /* ── LINK CARD ── */
-  .link-card { background: var(--white); border-radius: 12px; border: 1px solid var(--grey-border); display: flex; align-items: center; gap: 14px; padding: 14px 16px; margin-bottom: 10px; text-decoration: none; color: inherit; transition: all 0.15s; cursor: pointer; -webkit-user-select: none; user-select: none; }
-  .link-card:active { transform: scale(0.98); background: #f8f8f5; }
-  .link-card .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-  .link-card .card-text { flex: 1; min-width: 0; }
-  .link-card .card-title { font-weight: 600; font-size: 15px; color: var(--grey-dark); }
-  .link-card .card-desc { font-size: 12px; color: var(--grey-light); margin-top: 2px; }
-  .link-card .arrow { color: #ccc; font-size: 18px; flex-shrink: 0; }
+        .button-secondary:hover {
+            background: rgba(255, 237, 0, 0.1);
+        }
 
-  .ic-yellow { background: #FFF8C2; } .ic-blue { background: #E3F0FF; }
-  .ic-orange { background: #FFF3E0; } .ic-purple { background: #F3E5F5; }
-  .ic-teal   { background: #E0F7FA; } .ic-grey   { background: #F5F5F5; }
+        .toggle-text {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 16px;
+        }
 
-  /* ── BOTTOM NAV ── */
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h); background: var(--white); border-top: 1px solid var(--grey-border); display: flex; align-items: stretch; z-index: 100; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 12px rgba(0,0,0,0.06); }
-  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; border: none; background: none; padding: 8px 4px; color: #aaa; font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; transition: color 0.15s; }
-  .nav-item.active { color: var(--grey-dark); }
-  .nav-item .nav-icon { font-size: 20px; line-height: 1; }
+        .toggle-link {
+            color: #FFED00;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
 
-  /* ── ABOUT / CONTACT ── */
-  .about-card { background: var(--white); border-radius: 14px; border: 1px solid var(--grey-border); overflow: hidden; margin-bottom: 14px; }
-  .about-hero { background: var(--grey-dark); padding: 28px 24px; text-align: center; }
-  .about-hero .big-badge { background: var(--yellow); display: inline-flex; flex-direction: column; align-items: center; border-radius: 12px; padding: 10px 18px; margin-bottom: 14px; line-height: 1.2; }
-  .about-hero .big-badge span:first-child { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 20px; color: var(--grey-dark); }
-  .about-hero .big-badge span:last-child  { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; color: var(--grey-dark); letter-spacing: 2px; }
-  .about-hero h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; color: var(--white); letter-spacing: 1px; text-transform: uppercase; }
-  .about-hero p { font-size: 13px; color: #aaa; margin-top: 4px; }
-  .about-body { padding: 20px; }
-  .about-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--grey-border); }
-  .about-row:last-child { border-bottom: none; }
-  .about-row .icon { font-size: 20px; width: 32px; text-align: center; }
-  .about-row .info .label { font-size: 11px; font-weight: 600; color: var(--grey-light); text-transform: uppercase; letter-spacing: 0.5px; }
-  .about-row .info .val { font-size: 14px; color: var(--grey-dark); margin-top: 1px; }
-  .about-row .info a { color: var(--grey-dark); text-decoration: none; }
+        .toggle-link:hover {
+            text-decoration: underline;
+        }
 
-  .contact-card { background: var(--white); border-radius: 14px; border: 1px solid var(--grey-border); margin-bottom: 12px; overflow: hidden; }
-  .contact-card-header { background: var(--grey-dark); padding: 10px 16px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--yellow); }
-  .contact-row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--grey-border); text-decoration: none; color: inherit; transition: background 0.15s; }
-  .contact-row:last-child { border-bottom: none; }
-  .contact-row:active { background: #f8f8f5; }
-  .contact-row .c-icon { font-size: 18px; width: 28px; text-align: center; }
-  .contact-row .c-info .c-label { font-size: 11px; font-weight: 600; color: var(--grey-light); text-transform: uppercase; letter-spacing: 0.5px; }
-  .contact-row .c-info .c-val { font-size: 14px; color: var(--grey-dark); margin-top: 1px; font-weight: 500; }
-  .contact-row .c-arrow { margin-left: auto; color: #ccc; font-size: 16px; }
+        .info-box {
+            background: #F5F5F5;
+            border-left: 4px solid #FFED00;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
 
-  .screen-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: 1px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 16px; margin-top: 4px; }
+        .hidden {
+            display: none;
+        }
 
-  /* ── QUICK GRID ── */
-  .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 6px; }
-  .quick-card { background: var(--white); border-radius: 12px; border: 1px solid var(--grey-border); padding: 14px 12px; text-align: center; cursor: pointer; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: all 0.15s; }
-  .quick-card:active { transform: scale(0.97); }
-  .quick-card .q-icon { font-size: 26px; }
-  .quick-card .q-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--grey-dark); line-height: 1.2; }
-  .quick-card .q-sub { font-size: 11px; color: var(--grey-light); }
+        .error {
+            background: #FEE2E2;
+            color: #DC2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            border-left: 4px solid #DC2626;
+        }
 
-  .divider-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--grey-light); margin: 18px 0 8px; display: flex; align-items: center; gap: 8px; }
-  .divider-label::after { content: ''; flex: 1; height: 1px; background: var(--grey-border); }
+        .success {
+            background: #DCFCE7;
+            color: #16A34A;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            border-left: 4px solid #16A34A;
+        }
 
-  /* ── INSTALL BANNER ── */
-  #install-banner { display: none; position: fixed; bottom: calc(var(--nav-h) + 10px); left: 12px; right: 12px; background: var(--grey-dark); border-radius: 12px; padding: 12px 16px; z-index: 200; flex-direction: row; align-items: center; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-  #install-banner.show { display: flex; animation: fadeUp 0.3s ease; }
-  #install-banner .ib-text { flex: 1; }
-  #install-banner .ib-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: var(--white); }
-  #install-banner .ib-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
-  #install-banner .ib-install { background: var(--yellow); color: var(--grey-dark); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; padding: 8px 14px; cursor: pointer; }
-  #install-banner .ib-close { color: #777; font-size: 20px; cursor: pointer; padding: 4px; }
-</style>
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .portal-header {
+            background: linear-gradient(135deg, #FFED00 0%, #FFD700 100%);
+            padding: 20px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .portal-header h1 {
+            font-size: 28px;
+            color: #2C2C2C;
+        }
+
+        .logout-btn {
+            background: #2C2C2C;
+            color: #FFED00;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: #1a1a1a;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #2C2C2C;
+            margin-top: 4px;
+        }
+
+        .portal-content {
+            display: none;
+        }
+
+        .portal-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            background: #FFED00;
+            color: #2C2C2C;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .resource-link {
+            background: #F5F5F5;
+            border: 1px solid #E5E7EB;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .resource-link:hover {
+            background: white;
+            border-color: #FFED00;
+            transform: translateX(4px);
+        }
+
+        .resource-icon {
+            font-size: 32px;
+        }
+
+        .resource-info {
+            flex: 1;
+        }
+
+        .resource-title {
+            font-weight: 600;
+            color: #2C2C2C;
+            font-size: 16px;
+        }
+
+        .resource-desc {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .resource-arrow {
+            color: #999;
+            font-size: 18px;
+        }
+
+        .admin-section {
+            background: #F5F5F5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 2px solid #FFED00;
+        }
+
+        .admin-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2C2C2C;
+            margin-bottom: 16px;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: #FFED00;
+            color: #2C2C2C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .employee-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #E5E7EB;
+        }
+
+        .employee-email {
+            font-weight: 600;
+            color: #2C2C2C;
+        }
+
+        .employee-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .employee-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .employee-actions button {
+            flex: 1;
+            padding: 6px 12px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-remove {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .btn-remove:hover {
+            background: #FCA5A5;
+        }
+
+        .btn-reset {
+            background: #DBEAFE;
+            color: #0284C7;
+        }
+
+        .btn-reset:hover {
+            background: #BAE6FD;
+        }
+
+        .admin-toggle {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .admin-toggle-link {
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .admin-toggle-link:hover {
+            color: #2C2C2C;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .portal-header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .portal-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <!-- Login/Register Form -->
+        <div id="authForm" class="card">
+            <div class="header">
+                <div class="logo">🔐</div>
+                <h1 class="title">Staff Portal</h1>
+                <p class="subtitle" id="authSubtitle">Login to continue</p>
+            </div>
 
-<!-- ══════════════════════════════════════════════
-     AUTH WRAP — shown until logged in
-════════════════════════════════════════════════ -->
-<div id="auth-wrap">
-  <div class="auth-logo"><span>MEND A</span><span>BATH</span></div>
+            <div id="errorMessage" class="error hidden"></div>
+            <div id="successMessage" class="success hidden"></div>
 
-  <!-- LOGIN PANEL -->
-  <div class="auth-card" id="panel-login">
-    <h2>👋 Welcome Back</h2>
-    <p>Select your name and enter your 4-digit PIN to access the Staff Portal.</p>
+            <form id="form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label class="label">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="input" 
+                        placeholder="your.email@mendabath.co.uk"
+                        required
+                    >
+                </div>
 
-    <div class="auth-field">
-      <label>Your Name</label>
-      <select id="login-name">
-        <option value="">— Select your name —</option>
-        <optgroup label="Technicians">
-          <option>Cecil</option>
-          <option>David</option>
-          <option>Tyler</option>
-          <option>Peter</option>
-          <option>Richard</option>
-          <option>Stephen</option>
-        </optgroup>
-        <optgroup label="Admin">
-          <option>Grant</option>
-          <option>Lynne</option>
-          <option>Nicky</option>
-          <option>Ayesha</option>
-        </optgroup>
-      </select>
+                <div class="form-group">
+                    <label class="label">PIN (4 digits)</label>
+                    <input 
+                        type="password" 
+                        id="pin" 
+                        class="input" 
+                        placeholder="0000"
+                        maxlength="4"
+                        inputmode="numeric"
+                        required
+                    >
+                </div>
+
+                <div class="form-group hidden" id="confirmPinGroup">
+                    <label class="label">Confirm PIN</label>
+                    <input 
+                        type="password" 
+                        id="confirmPin" 
+                        class="input" 
+                        placeholder="0000"
+                        maxlength="4"
+                        inputmode="numeric"
+                    >
+                </div>
+
+                <button type="submit" class="button button-primary" id="submitBtn">Login</button>
+            </form>
+
+            <div class="toggle-text">
+                <span id="toggleText">New here?</span>
+                <a class="toggle-link" onclick="toggleMode()">Create Account</a>
+            </div>
+
+            <div class="info-box" id="infoBox">
+                • Must be exactly 4 digits<br>
+                • You set your own PIN on first login<br>
+                • Keep it secure and don't share
+            </div>
+        </div>
+
+        <!-- Staff Portal -->
+        <div id="portal" class="portal-content">
+            <div class="card">
+                <div class="portal-header">
+                    <div>
+                        <h1>Staff Portal</h1>
+                        <div class="user-email" id="userEmail"></div>
+                    </div>
+                    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                </div>
+
+                <div id="portalContent"></div>
+
+                <!-- Admin Panel (Only visible to admin) -->
+                <div id="adminPanel" class="admin-section hidden">
+                    <div>
+                        <div class="admin-title">Admin Panel <span class="admin-badge">ADMIN ONLY</span></div>
+                        
+                        <div class="form-group">
+                            <label class="label">Add New Employee</label>
+                            <input 
+                                type="email" 
+                                id="newEmployeeEmail" 
+                                class="input" 
+                                placeholder="employee@mendabath.co.uk"
+                            >
+                            <button type="button" class="button button-primary" onclick="addEmployee()" style="margin-top: 8px;">
+                                Add Employee
+                            </button>
+                        </div>
+
+                        <div class="admin-title" style="margin-top: 20px; margin-bottom: 12px; font-size: 16px;">Staff Members (<span id="employeeCount">0</span>)</div>
+                        <div id="employeeList"></div>
+                    </div>
+                </div>
+
+                <!-- Admin Toggle (Hidden by default) -->
+                <div class="admin-toggle">
+                    <a class="admin-toggle-link" onclick="toggleAdminPanel()">Admin Access</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="auth-field">
-      <label>Your PIN</label>
-      <div class="pin-display" id="login-pin-display">
-        <div class="pin-dot" id="login-d0"></div>
-        <div class="pin-dot" id="login-d1"></div>
-        <div class="pin-dot" id="login-d2"></div>
-        <div class="pin-dot" id="login-d3"></div>
-      </div>
-      <div class="pin-pad">
-        <button class="pin-btn" onclick="pinPress('login',1)">1</button>
-        <button class="pin-btn" onclick="pinPress('login',2)">2</button>
-        <button class="pin-btn" onclick="pinPress('login',3)">3</button>
-        <button class="pin-btn" onclick="pinPress('login',4)">4</button>
-        <button class="pin-btn" onclick="pinPress('login',5)">5</button>
-        <button class="pin-btn" onclick="pinPress('login',6)">6</button>
-        <button class="pin-btn" onclick="pinPress('login',7)">7</button>
-        <button class="pin-btn" onclick="pinPress('login',8)">8</button>
-        <button class="pin-btn" onclick="pinPress('login',9)">9</button>
-        <button class="pin-btn del" onclick="pinDel('login')">⌫</button>
-        <button class="pin-btn zero" onclick="pinPress('login',0)">0</button>
-      </div>
-    </div>
+    <script>
+        let isLoginMode = true;
+        let currentUser = null;
+        let employees = [];
+        let showAdminPanel = false;
 
-    <div class="auth-error" id="login-error">Incorrect name or PIN. Please try again.</div>
-    <button class="auth-btn auth-btn-primary" onclick="doLogin()">Sign In →</button>
-    <button class="auth-btn auth-btn-secondary" onclick="showPanel('register')">First time? Set up your PIN</button>
-  </div>
+        // ADMIN PIN - CHANGE THIS TO YOUR PREFERRED PIN
+        const ADMIN_PIN = "9999";
 
-  <!-- REGISTER PANEL -->
-  <div class="auth-card" id="panel-register" style="display:none">
-    <h2>🔐 Set Your PIN</h2>
-    <p>Choose your name and create a 4-digit PIN. You'll use this every time you log in.</p>
+        // Initialize
+        function init() {
+            loadFromStorage();
+            if (currentUser) {
+                showPortal();
+            } else {
+                showAuth();
+            }
+        }
 
-    <div class="auth-field">
-      <label>Your Name</label>
-      <select id="reg-name">
-        <option value="">— Select your name —</option>
-        <optgroup label="Technicians">
-          <option>Cecil</option>
-          <option>David</option>
-          <option>Tyler</option>
-          <option>Peter</option>
-          <option>Richard</option>
-          <option>Stephen</option>
-        </optgroup>
-        <optgroup label="Admin">
-          <option>Grant</option>
-          <option>Lynne</option>
-          <option>Nicky</option>
-          <option>Ayesha</option>
-        </optgroup>
-      </select>
-    </div>
+        // Storage Management
+        function saveToStorage() {
+            localStorage.setItem('staffPortalEmployees', JSON.stringify(employees));
+            if (currentUser) {
+                localStorage.setItem('staffPortalCurrentUser', JSON.stringify(currentUser));
+            }
+        }
 
-    <div class="auth-field">
-      <label>Create a 4-digit PIN</label>
-      <div class="pin-display" id="reg-pin-display">
-        <div class="pin-dot" id="reg-d0"></div>
-        <div class="pin-dot" id="reg-d1"></div>
-        <div class="pin-dot" id="reg-d2"></div>
-        <div class="pin-dot" id="reg-d3"></div>
-      </div>
-      <div class="pin-pad">
-        <button class="pin-btn" onclick="pinPress('reg',1)">1</button>
-        <button class="pin-btn" onclick="pinPress('reg',2)">2</button>
-        <button class="pin-btn" onclick="pinPress('reg',3)">3</button>
-        <button class="pin-btn" onclick="pinPress('reg',4)">4</button>
-        <button class="pin-btn" onclick="pinPress('reg',5)">5</button>
-        <button class="pin-btn" onclick="pinPress('reg',6)">6</button>
-        <button class="pin-btn" onclick="pinPress('reg',7)">7</button>
-        <button class="pin-btn" onclick="pinPress('reg',8)">8</button>
-        <button class="pin-btn" onclick="pinPress('reg',9)">9</button>
-        <button class="pin-btn del" onclick="pinDel('reg')">⌫</button>
-        <button class="pin-btn zero" onclick="pinPress('reg',0)">0</button>
-      </div>
-    </div>
+        function loadFromStorage() {
+            const stored = localStorage.getItem('staffPortalEmployees');
+            if (stored) {
+                employees = JSON.parse(stored);
+            }
 
-    <div class="auth-error"   id="reg-error"></div>
-    <div class="auth-success" id="reg-success">PIN saved! You can now sign in.</div>
-    <button class="auth-btn auth-btn-primary" onclick="doRegister()">Save PIN →</button>
-    <button class="auth-btn auth-btn-secondary" onclick="showPanel('login')">← Back to Sign In</button>
-  </div>
-</div>
+            const user = localStorage.getItem('staffPortalCurrentUser');
+            if (user) {
+                currentUser = JSON.parse(user);
+            }
+        }
 
-<!-- ══════════════════════════════════════════════
-     INSTALL BANNER
-════════════════════════════════════════════════ -->
-<div id="install-banner">
-  <div class="ib-text">
-    <div class="ib-title">📱 Install Staff Portal</div>
-    <div class="ib-sub">Add to your home screen</div>
-  </div>
-  <button class="ib-install" onclick="installApp()">Install</button>
-  <span class="ib-close" onclick="dismissBanner()">✕</span>
-</div>
+        // Toggle between login and register
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            const form = document.getElementById('form');
+            const confirmPinGroup = document.getElementById('confirmPinGroup');
+            const submitBtn = document.getElementById('submitBtn');
+            const authSubtitle = document.getElementById('authSubtitle');
+            const toggleText = document.getElementById('toggleText');
 
-<!-- ══════════════════════════════════════════════
-     APP HEADER
-════════════════════════════════════════════════ -->
-<div class="app-header">
-  <div class="logo-row">
-    <div class="logo-badge"><span>MEND A</span><span>BATH</span></div>
-    <div class="header-titles">
-      <h1>Staff Portal</h1>
-      <p>Quick access to all staff resources</p>
-    </div>
-  </div>
-  <div class="user-pill" id="user-pill">
-    <div class="avatar" id="user-avatar">?</div>
-    <div>
-      <div class="u-name" id="user-name-display">—</div>
-      <div class="u-role">Technician</div>
-    </div>
-    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
-  </div>
-</div>
+            if (isLoginMode) {
+                confirmPinGroup.classList.add('hidden');
+                submitBtn.textContent = 'Login';
+                authSubtitle.textContent = 'Login to continue';
+                toggleText.textContent = 'New here?';
+                document.getElementById('pin').value = '';
+                document.getElementById('confirmPin').value = '';
+            } else {
+                confirmPinGroup.classList.remove('hidden');
+                submitBtn.textContent = 'Create Account';
+                authSubtitle.textContent = 'Create your account';
+                toggleText.textContent = 'Already have an account?';
+                document.getElementById('pin').value = '';
+                document.getElementById('confirmPin').value = '';
+            }
 
-<!-- ══════════════════════════════════════════════
-     SCROLL BODY
-════════════════════════════════════════════════ -->
-<div class="scroll-body">
+            clearMessages();
+        }
 
-  <!-- HOME SCREEN -->
-  <div class="screen active" id="screen-home">
-    <div class="divider-label">Quick Access</div>
-    <div class="quick-grid">
-      <a class="quick-card" id="qc-order" href="#" onclick="openForm('order'); return false;">
-        <div class="q-icon">📦</div><div class="q-label">Stock Order</div><div class="q-sub">Place an order</div>
-      </a>
-      <a class="quick-card" id="qc-take" href="#" onclick="openForm('take'); return false;">
-        <div class="q-icon">📋</div><div class="q-label">Stock Take</div><div class="q-sub">Monthly sheet</div>
-      </a>
-      <a class="quick-card" id="qc-maint" href="#" onclick="openForm('maint'); return false;">
-        <div class="q-icon">🔧</div><div class="q-label">Maintenance</div><div class="q-sub">Equipment check</div>
-      </a>
-      <a class="quick-card" href="https://drive.google.com/drive/folders/14PZPWW7W-o9TYco92HRhXv9uqJsApHHh?usp=sharing" target="_blank">
-        <div class="q-icon">📸</div><div class="q-label">Submit Images</div><div class="q-sub">Google Drive</div>
-      </a>
-    </div>
+        // Handle form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            clearMessages();
 
-    <div class="cat-header">📦 Stock Management</div>
-    <a class="link-card" href="#" onclick="openForm('order'); return false;"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">Create and manage stock orders</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="#" onclick="openForm('take'); return false;"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">Conduct monthly inventory stock takes</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="#" onclick="openForm('maint'); return false;"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">Track monthly maintenance tasks</div></div><div class="arrow">›</div></a>
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const pin = document.getElementById('pin').value.trim();
 
-    <div class="cat-header">👥 HR &amp; Safety</div>
-    <a class="link-card" href="https://app.brighthr.com/dashboard" target="_blank"><div class="card-icon ic-purple">👥</div><div class="card-text"><div class="card-title">Bright HR</div><div class="card-desc">HR management and employee records</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://app.brightsafe.com/" target="_blank"><div class="card-icon ic-teal">🛡️</div><div class="card-text"><div class="card-title">Bright Safe</div><div class="card-desc">Health &amp; safety documentation</div></div><div class="arrow">›</div></a>
+            if (!email || !pin) {
+                showError('Please fill in all fields');
+                return;
+            }
 
-    <div class="cat-header">📄 Documentation</div>
-    <a class="link-card" href="https://drive.google.com/drive/folders/1XMT0pHqjoFva8NUXJuPEGkHqCZx0dYvD?usp=drive_link" target="_blank"><div class="card-icon ic-orange">📋</div><div class="card-text"><div class="card-title">Company SOPs</div><div class="card-desc">Standard Operating Procedures library</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://drive.google.com/drive/folders/1M68r7oTlrIq5wOyBJlouDImJLlknIeBS?usp=drive_link" target="_blank"><div class="card-icon ic-blue">📖</div><div class="card-text"><div class="card-title">Policies &amp; Procedures</div><div class="card-desc">Company policies and guidelines</div></div><div class="arrow">›</div></a>
+            if (!/^\d{4}$/.test(pin)) {
+                showError('PIN must be exactly 4 digits');
+                return;
+            }
 
-    <div class="cat-header">☁️ Files &amp; Media</div>
-    <a class="link-card" href="https://drive.google.com/drive/folders/1cFIWVVm_x-_IM9zClfBEp4sSwqKEawcK?usp=drive_link" target="_blank"><div class="card-icon ic-yellow">📸</div><div class="card-text"><div class="card-title">Submit Images</div><div class="card-desc">Upload job photos to Google Drive</div></div><div class="arrow">›</div></a>
-  </div>
+            if (isLoginMode) {
+                handleLogin(email, pin);
+            } else {
+                handleRegister(email, pin);
+            }
+        }
 
-  <!-- SERVICES SCREEN -->
-  <div class="screen" id="screen-services">
-    <div class="screen-title">All Tools</div>
-    <div class="cat-header">📦 Stock Management</div>
-    <a class="link-card" href="#" onclick="openForm('order'); return false;"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">Create and manage stock orders</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="#" onclick="openForm('take'); return false;"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">Conduct monthly inventory stock takes</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="#" onclick="openForm('maint'); return false;"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">Track monthly equipment maintenance</div></div><div class="arrow">›</div></a>
-    <div class="cat-header">👥 HR &amp; Safety</div>
-    <a class="link-card" href="https://app.brighthr.com/dashboard" target="_blank"><div class="card-icon ic-purple">👥</div><div class="card-text"><div class="card-title">Bright HR</div><div class="card-desc">HR management and employee records</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://app.brightsafe.com/" target="_blank"><div class="card-icon ic-teal">🛡️</div><div class="card-text"><div class="card-title">Bright Safe</div><div class="card-desc">Health &amp; safety documentation</div></div><div class="arrow">›</div></a>
-    <div class="cat-header">📄 Documentation</div>
-    <a class="link-card" href="https://mendabathuk-my.sharepoint.com/:f:/g/personal/info_mendabath_co_uk/IgAYmC39b0K5TIvKHJE4t5x3AQgDlfKvgtTCxoKN-DB4wsQ?e=cWup0h" target="_blank"><div class="card-icon ic-orange">📋</div><div class="card-text"><div class="card-title">Company SOPs</div><div class="card-desc">Standard Operating Procedures library</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathuk-my.sharepoint.com/:f:/g/personal/info_mendabath_co_uk/IgC2-MdgViEAS5XCxlvr6veZAWsSh7-XMdFxQu5Lg0oXGg8?e=xGcN3d" target="_blank"><div class="card-icon ic-blue">📖</div><div class="card-text"><div class="card-title">Policies &amp; Procedures</div><div class="card-desc">Company policies and guidelines</div></div><div class="arrow">›</div></a>
-    <div class="cat-header">☁️ Files &amp; Media</div>
-    <a class="link-card" href="https://drive.google.com/drive/folders/14PZPWW7W-o9TYco92HRhXv9uqJsApHHh?usp=sharing" target="_blank"><div class="card-icon ic-yellow">📸</div><div class="card-text"><div class="card-title">Submit Images</div><div class="card-desc">Upload job photos to Google Drive</div></div><div class="arrow">›</div></a>
-  </div>
+        // Login
+        function handleLogin(email, pin) {
+            const employee = employees.find(e => e.email === email && e.pin === pin);
 
-  <!-- ABOUT SCREEN -->
-  <div class="screen" id="screen-about">
-    <div class="about-card">
-      <div class="about-hero">
-        <div class="big-badge"><span>MEND A</span><span>BATH</span></div>
-        <h2>Mendabath UK</h2>
-        <p>Staff Portal · Internal Resources</p>
-      </div>
-      <div class="about-body">
-        <div class="about-row"><div class="icon">🌐</div><div class="info"><div class="label">Website</div><div class="val"><a href="https://www.mendabath.co.uk" target="_blank">www.mendabath.co.uk</a></div></div></div>
-        <div class="about-row"><div class="icon">📧</div><div class="info"><div class="label">Email</div><div class="val"><a href="mailto:info@mendabath.co.uk">info@mendabath.co.uk</a></div></div></div>
-        <div class="about-row"><div class="icon">📞</div><div class="info"><div class="label">Phone</div><div class="val"><a href="tel:08003284324">0800 328 4324</a></div></div></div>
-        <div class="about-row"><div class="icon">📱</div><div class="info"><div class="label">Staff Portal</div><div class="val">Version 2.0 · Mendabath Internal</div></div></div>
-      </div>
-    </div>
-  </div>
+            if (!employee) {
+                showError('Invalid email or PIN');
+                return;
+            }
 
-  <!-- CONTACT SCREEN -->
-  <div class="screen" id="screen-contact">
-    <div class="screen-title">Contact</div>
-    <div class="contact-card">
-      <div class="contact-card-header">📞 Get in Touch</div>
-      <a class="contact-row" href="tel:08003284324"><div class="c-icon">📞</div><div class="c-info"><div class="c-label">Freephone</div><div class="c-val">0800 328 4324</div></div><div class="c-arrow">›</div></a>
-      <a class="contact-row" href="mailto:info@mendabath.co.uk"><div class="c-icon">📧</div><div class="c-info"><div class="c-label">Email</div><div class="c-val">info@mendabath.co.uk</div></div><div class="c-arrow">›</div></a>
-      <a class="contact-row" href="https://www.mendabath.co.uk" target="_blank"><div class="c-icon">🌐</div><div class="c-info"><div class="c-label">Website</div><div class="c-val">www.mendabath.co.uk</div></div><div class="c-arrow">›</div></a>
-    </div>
-    <div class="contact-card">
-      <div class="contact-card-header">🔗 Quick Links</div>
-      <a class="contact-row" href="#" onclick="openForm('order'); return false;"><div class="c-icon">📦</div><div class="c-info"><div class="c-label">Stock Management</div><div class="c-val">Stock Order Form</div></div><div class="c-arrow">›</div></a>
-      <a class="contact-row" href="https://app.brighthr.com/dashboard" target="_blank"><div class="c-icon">👥</div><div class="c-info"><div class="c-label">HR Portal</div><div class="c-val">Bright HR Dashboard</div></div><div class="c-arrow">›</div></a>
-      <a class="contact-row" href="https://app.brightsafe.com/" target="_blank"><div class="c-icon">🛡️</div><div class="c-info"><div class="c-label">Safety</div><div class="c-val">Bright Safe Portal</div></div><div class="c-arrow">›</div></a>
-    </div>
-  </div>
+            employee.lastLogin = new Date().toISOString();
+            currentUser = employee;
+            showAdminPanel = false;
+            saveToStorage();
+            showPortal();
+        }
 
-  <!-- LINKS SCREEN -->
-  <div class="screen" id="screen-links">
-    <div class="screen-title">All Links</div>
-    <a class="link-card" href="#" onclick="openForm('order'); return false;"><div class="card-icon ic-orange">📦</div><div class="card-text"><div class="card-title">Stock Order</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="#" onclick="openForm('take'); return false;"><div class="card-icon ic-blue">📊</div><div class="card-text"><div class="card-title">Stock Take</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="#" onclick="openForm('maint'); return false;"><div class="card-icon ic-grey">🔧</div><div class="card-text"><div class="card-title">Monthly Maintenance</div><div class="card-desc">mendabathrenew.github.io</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://app.brighthr.com/dashboard" target="_blank"><div class="card-icon ic-purple">👥</div><div class="card-text"><div class="card-title">Bright HR</div><div class="card-desc">app.brighthr.com</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://app.brightsafe.com/" target="_blank"><div class="card-icon ic-teal">🛡️</div><div class="card-text"><div class="card-title">Bright Safe</div><div class="card-desc">app.brightsafe.com</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathuk-my.sharepoint.com/:f:/g/personal/info_mendabath_co_uk/IgAYmC39b0K5TIvKHJE4t5x3AQgDlfKvgtTCxoKN-DB4wsQ?e=cWup0h" target="_blank"><div class="card-icon ic-orange">📋</div><div class="card-text"><div class="card-title">Company SOPs</div><div class="card-desc">SharePoint library</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://mendabathuk-my.sharepoint.com/:f:/g/personal/info_mendabath_co_uk/IgC2-MdgViEAS5XCxlvr6veZAWsSh7-XMdFxQu5Lg0oXGg8?e=xGcN3d" target="_blank"><div class="card-icon ic-blue">📖</div><div class="card-text"><div class="card-title">Policies &amp; Procedures</div><div class="card-desc">SharePoint library</div></div><div class="arrow">›</div></a>
-    <a class="link-card" href="https://drive.google.com/drive/folders/14PZPWW7W-o9TYco92HRhXv9uqJsApHHh?usp=sharing" target="_blank"><div class="card-icon ic-yellow">📸</div><div class="card-text"><div class="card-title">Submit Images</div><div class="card-desc">drive.google.com</div></div><div class="arrow">›</div></a>
-  </div>
+        // Register
+        function handleRegister(email, pin) {
+            const confirmPin = document.getElementById('confirmPin').value.trim();
 
-</div><!-- /scroll-body -->
+            if (pin !== confirmPin) {
+                showError('PINs do not match');
+                return;
+            }
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <button class="nav-item active" id="nav-home"     onclick="showScreen('home')"><div class="nav-icon">🏠</div><span>Home</span></button>
-  <button class="nav-item"        id="nav-services" onclick="showScreen('services')"><div class="nav-icon">🔨</div><span>Services</span></button>
-  <button class="nav-item"        id="nav-about"    onclick="showScreen('about')"><div class="nav-icon">ℹ️</div><span>About</span></button>
-  <button class="nav-item"        id="nav-contact"  onclick="showScreen('contact')"><div class="nav-icon">📞</div><span>Contact</span></button>
-  <button class="nav-item"        id="nav-links"    onclick="showScreen('links')"><div class="nav-icon">🔗</div><span>Links</span></button>
-</nav>
+            if (employees.some(e => e.email === email)) {
+                showError('Email already exists');
+                return;
+            }
 
-<script>
-// ── STORAGE KEY ───────────────────────────────────────────
-const STORE_KEY = 'mb_pins_v1';   // { name: hashedPin }
-const SESSION_KEY = 'mb_session'; // { name, expires }
-const SESSION_HOURS = 12;         // stay logged in for 12 hours
+            if (!email.includes('@')) {
+                showError('Please enter a valid email');
+                return;
+            }
 
-// ── SIMPLE PIN HASH (not cryptographic — suitable for this use case) ─────────
-function hashPin(name, pin) {
-  // Combine name + pin + salt so two people with same PIN have different hashes
-  const str = 'mb2025' + name.toLowerCase() + pin;
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return hash.toString(36);
-}
+            const newEmployee = {
+                id: `emp_${Date.now()}`,
+                email,
+                pin,
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            };
 
-function getStore() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
-}
-function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+            employees.push(newEmployee);
+            currentUser = newEmployee;
+            showAdminPanel = false;
+            saveToStorage();
+            showSuccess('Account created successfully!');
+            setTimeout(() => showPortal(), 1000);
+        }
 
-// ── SESSION ───────────────────────────────────────────────
-function getSession() {
-  try {
-    const s = JSON.parse(localStorage.getItem(SESSION_KEY));
-    if (s && s.expires > Date.now()) return s;
-  } catch {}
-  return null;
-}
-function saveSession(name) {
-  localStorage.setItem(SESSION_KEY, JSON.stringify({
-    name, expires: Date.now() + SESSION_HOURS * 60 * 60 * 1000
-  }));
-}
-function clearSession() { localStorage.removeItem(SESSION_KEY); }
+        // Logout
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                currentUser = null;
+                showAdminPanel = false;
+                localStorage.removeItem('staffPortalCurrentUser');
+                isLoginMode = true;
+                document.getElementById('email').value = '';
+                document.getElementById('pin').value = '';
+                document.getElementById('confirmPin').value = '';
+                showAuth();
+            }
+        }
 
-// ── PIN PAD LOGIC ─────────────────────────────────────────
-const pins = { login: '', reg: '' };
+        // Toggle Admin Panel
+        function toggleAdminPanel() {
+            const adminPin = prompt('Enter Admin PIN:');
+            if (adminPin === null) return;
 
-function pinPress(ctx, digit) {
-  if (pins[ctx].length >= 4) return;
-  pins[ctx] += digit;
-  updatePinDisplay(ctx);
-}
-function pinDel(ctx) {
-  pins[ctx] = pins[ctx].slice(0, -1);
-  updatePinDisplay(ctx);
-}
-function updatePinDisplay(ctx) {
-  for (let i = 0; i < 4; i++) {
-    document.getElementById(ctx + '-d' + i).classList.toggle('filled', i < pins[ctx].length);
-  }
-}
-function clearPin(ctx) { pins[ctx] = ''; updatePinDisplay(ctx); }
+            if (adminPin === ADMIN_PIN) {
+                showAdminPanel = !showAdminPanel;
+                updateAdminPanelVisibility();
+                if (showAdminPanel) {
+                    alert('Admin Panel unlocked!');
+                } else {
+                    alert('Admin Panel locked');
+                }
+            } else {
+                alert('Invalid Admin PIN');
+            }
+        }
 
-// ── PANEL SWITCHING ───────────────────────────────────────
-function showPanel(p) {
-  document.getElementById('panel-login').style.display    = p === 'login'    ? 'block' : 'none';
-  document.getElementById('panel-register').style.display = p === 'register' ? 'block' : 'none';
-  clearPin('login'); clearPin('reg');
-  document.getElementById('login-error').classList.remove('show');
-  document.getElementById('reg-error').classList.remove('show');
-  document.getElementById('reg-success').classList.remove('show');
-}
+        // Update Admin Panel Visibility
+        function updateAdminPanelVisibility() {
+            const adminPanel = document.getElementById('adminPanel');
+            if (showAdminPanel) {
+                adminPanel.classList.remove('hidden');
+            } else {
+                adminPanel.classList.add('hidden');
+            }
+        }
 
-// ── LOGIN ─────────────────────────────────────────────────
-function doLogin() {
-  const name = document.getElementById('login-name').value.trim();
-  const pin  = pins['login'];
-  const err  = document.getElementById('login-error');
-  err.classList.remove('show');
+        // Add employee (admin)
+        function addEmployee() {
+            if (!showAdminPanel) {
+                alert('Admin access required');
+                return;
+            }
 
-  if (!name) { err.textContent = 'Please select your name.'; err.classList.add('show'); return; }
-  if (pin.length < 4) { err.textContent = 'Please enter your 4-digit PIN.'; err.classList.add('show'); return; }
+            const email = document.getElementById('newEmployeeEmail').value.trim().toLowerCase();
 
-  const store = getStore();
-  const expected = store[name.toLowerCase()];
+            if (!email) {
+                alert('Please enter an email');
+                return;
+            }
 
-  if (!expected) {
-    err.textContent = 'No PIN found for ' + name + '. Please set up your PIN first.';
-    err.classList.add('show'); clearPin('login'); return;
-  }
-  if (hashPin(name, pin) !== expected) {
-    err.textContent = 'Incorrect PIN. Please try again.';
-    err.classList.add('show'); clearPin('login'); return;
-  }
+            if (!email.includes('@')) {
+                alert('Please enter a valid email');
+                return;
+            }
 
-  saveSession(name);
-  enterApp(name);
-}
+            if (employees.some(e => e.email === email)) {
+                alert('Email already exists');
+                return;
+            }
 
-// ── REGISTER ──────────────────────────────────────────────
-function doRegister() {
-  const name = document.getElementById('reg-name').value.trim();
-  const pin  = pins['reg'];
-  const err  = document.getElementById('reg-error');
-  const ok   = document.getElementById('reg-success');
-  err.classList.remove('show'); ok.classList.remove('show');
+            const newEmployee = {
+                id: `emp_${Date.now()}`,
+                email,
+                pin: '',
+                createdAt: new Date().toISOString()
+            };
 
-  if (!name) { err.textContent = 'Please select your name.'; err.classList.add('show'); return; }
-  if (pin.length < 4) { err.textContent = 'Please enter a 4-digit PIN.'; err.classList.add('show'); return; }
+            employees.push(newEmployee);
+            saveToStorage();
+            document.getElementById('newEmployeeEmail').value = '';
+            updateEmployeeList();
+            alert(`${email} has been added to the staff portal`);
+        }
 
-  const store = getStore();
-  // Allow re-registration (tech forgot their PIN) — just overwrite
-  store[name.toLowerCase()] = hashPin(name, pin);
-  saveStore(store);
-  clearPin('reg');
-  ok.classList.add('show');
-  setTimeout(() => { showPanel('login'); document.getElementById('login-name').value = name; }, 1800);
-}
+        // Remove employee (admin)
+        function removeEmployee(id) {
+            if (!showAdminPanel) {
+                alert('Admin access required');
+                return;
+            }
 
-// ── ENTER APP ─────────────────────────────────────────────
-function enterApp(name) {
-  document.getElementById('auth-wrap').classList.add('hidden');
-  document.getElementById('user-name-display').textContent = name;
-  document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
-  currentUser = name;
-}
+            if (confirm('Are you sure you want to remove this employee?')) {
+                employees = employees.filter(e => e.id !== id);
+                saveToStorage();
+                updateEmployeeList();
+            }
+        }
 
-// ── LOGOUT ────────────────────────────────────────────────
-function doLogout() {
-  if (!confirm('Sign out of the Staff Portal?')) return;
-  clearSession();
-  currentUser = null;
-  document.getElementById('auth-wrap').classList.remove('hidden');
-  showPanel('login');
-  document.getElementById('login-name').value = '';
-}
+        // Reset PIN (admin)
+        function resetPin(id) {
+            if (!showAdminPanel) {
+                alert('Admin access required');
+                return;
+            }
 
-// ── OPEN FORM WITH AUTO-NAME ──────────────────────────────
-// Base URLs for each form
-const FORM_URLS = {
-  order: 'https://mendabathrenew.github.io/Stock-Order/',
-  take:  'https://mendabathrenew.github.io/Mendabath-Stock-Take/',
-  maint: 'https://mendabathrenew.github.io/Monthly-Maintenance/'
-};
+            const newPin = prompt('Enter new 4-digit PIN:');
+            if (newPin === null) return;
 
-// The forms accept ?user=NAME in the URL — the form pages read this and pre-select the name
-// (You will also need to update each form's index.html to read this param — see note below)
-function openForm(type) {
-  if (!currentUser) return;
-  const base = FORM_URLS[type];
-  const url  = base + '?user=' + encodeURIComponent(currentUser);
-  window.open(url, '_blank');
-}
+            if (!/^\d{4}$/.test(newPin)) {
+                alert('PIN must be exactly 4 digits');
+                return;
+            }
 
-// ── NAVIGATION ────────────────────────────────────────────
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  document.getElementById('nav-' + name).classList.add('active');
-  document.querySelector('.scroll-body').scrollTop = 0;
-}
+            const employee = employees.find(e => e.id === id);
+            if (employee) {
+                employee.pin = newPin;
+                saveToStorage();
+                updateEmployeeList();
+                alert('PIN updated successfully');
+            }
+        }
 
-// ── BOOT ──────────────────────────────────────────────────
-let currentUser = null;
+        // Update employee list
+        function updateEmployeeList() {
+            const list = document.getElementById('employeeList');
+            const count = document.getElementById('employeeCount');
 
-(function boot() {
-  const session = getSession();
-  if (session) {
-    enterApp(session.name);
-  } else {
-    document.getElementById('auth-wrap').classList.remove('hidden');
-    showPanel('login');
-  }
-})();
+            count.textContent = employees.length;
 
-// ── PWA INSTALL ───────────────────────────────────────────
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault(); deferredPrompt = e;
-  setTimeout(() => { document.getElementById('install-banner').classList.add('show'); }, 3000);
-});
-function installApp() {
-  if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { deferredPrompt = null; dismissBanner(); }); }
-}
-function dismissBanner() { document.getElementById('install-banner').classList.remove('show'); }
-window.addEventListener('appinstalled', () => { dismissBanner(); deferredPrompt = null; });
+            if (employees.length === 0) {
+                list.innerHTML = '<div style="color: #666; font-size: 14px; text-align: center; padding: 20px;">No employees added yet</div>';
+                return;
+            }
 
-// ── SERVICE WORKER ────────────────────────────────────────
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.log('SW error:', err));
-  });
-}
-</script>
+            list.innerHTML = employees.map(emp => `
+                <div class="employee-item">
+                    <div class="employee-email">${emp.email}</div>
+                    <div class="employee-info">
+                        ${emp.pin ? 'PIN set' : 'PIN not set'}
+                        ${emp.lastLogin ? ' • Last login: ' + new Date(emp.lastLogin).toLocaleDateString() : ''}
+                    </div>
+                    <div class="employee-actions">
+                        <button class="btn-reset" onclick="resetPin('${emp.id}')">Reset PIN</button>
+                        <button class="btn-remove" onclick="removeEmployee('${emp.id}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show/Hide UI
+        function showAuth() {
+            document.getElementById('authForm').style.display = 'block';
+            document.getElementById('portal').classList.remove('active');
+        }
+
+        function showPortal() {
+            document.getElementById('authForm').style.display = 'none';
+            document.getElementById('portal').classList.add('active');
+            document.getElementById('userEmail').textContent = `Logged in as: ${currentUser.email}`;
+            renderPortalContent();
+            updateEmployeeList();
+            updateAdminPanelVisibility();
+        }
+
+        // Render portal content
+        function renderPortalContent() {
+            const resources = [
+                {
+                    title: 'Stock Management',
+                    items: [
+                        { title: 'Stock Order', desc: 'Create and manage stock orders', icon: '📦', url: 'https://mendabathrenew.github.io/Stock-Order/' },
+                        { title: 'Stock Take', desc: 'Conduct inventory stock takes', icon: '📊', url: 'https://mendabathrenew.github.io/Mendabath-Stock-Take/' },
+                        { title: 'Monthly Maintenance', desc: 'Track monthly maintenance tasks', icon: '🔧', url: 'https://mendabathrenew.github.io/Monthly-Maintenance/' }
+                    ]
+                },
+                {
+                    title: 'HR & Safety',
+                    items: [
+                        { title: 'Bright HR', desc: 'HR management and employee records', icon: '👥', url: 'https://app.brighthr.com/dashboard' },
+                        { title: 'Bright Safe', desc: 'Health & safety documentation', icon: '🛡️', url: 'https://app.brightsafe.com/' }
+                    ]
+                },
+                {
+                    title: 'Documentation',
+                    items: [
+                        { title: 'Company SOPs', desc: 'Standard Operating Procedures', icon: '📋', url: 'https://docs.google.com/document/d/1example/edit' },
+                        { title: 'Policies & Procedures', desc: 'Company policies and guidelines', icon: '📖', url: 'https://docs.google.com/document/d/1example/edit' }
+                    ]
+                },
+                {
+                    title: 'Media & Content',
+                    items: [
+                        { title: 'Submit Images', desc: 'Upload work photos and documentation', icon: '📸', url: 'https://drive.google.com/drive/folders/14PZPWW7W-o9TYco92HRhXv9uqJsApHHh?usp=sharing' }
+                    ]
+                }
+            ];
+
+            const content = resources.map(section => `
+                <div class="section">
+                    <div class="section-title">${section.title}</div>
+                    ${section.items.map(item => `
+                        <a href="${item.url}" target="_blank" class="resource-link">
+                            <div class="resource-icon">${item.icon}</div>
+                            <div class="resource-info">
+                                <div class="resource-title">${item.title}</div>
+                                <div class="resource-desc">${item.desc}</div>
+                            </div>
+                            <div class="resource-arrow">→</div>
+                        </a>
+                    `).join('')}
+                </div>
+            `).join('');
+
+            document.getElementById('portalContent').innerHTML = content;
+        }
+
+        // Message handlers
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.classList.remove('hidden');
+        }
+
+        function clearMessages() {
+            document.getElementById('errorMessage').classList.add('hidden');
+            document.getElementById('successMessage').classList.add('hidden');
+        }
+
+        // Start app
+        init();
+    </script>
 </body>
 </html>
